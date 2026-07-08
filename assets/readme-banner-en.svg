@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-labelledby="title desc">
+  <title id="title">PDCA Skill Creator English Banner</title>
+  <desc id="desc">A slim English banner for PDCA Skill Creator.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1220"/>
+      <stop offset="0.52" stop-color="#12303A"/>
+      <stop offset="1" stop-color="#234C3E"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="770" y1="92" x2="1110" y2="276" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#14B8A6"/>
+      <stop offset="0.52" stop-color="#38BDF8"/>
+      <stop offset="1" stop-color="#A3E635"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="360" rx="28" fill="url(#bg)"/>
+  <circle cx="1090" cy="70" r="160" fill="#38BDF8" opacity="0.08"/>
+  <circle cx="60" cy="320" r="170" fill="#A3E635" opacity="0.08"/>
+  <g transform="translate(80 72)" font-family="Inter, Segoe UI, Arial, sans-serif">
+    <text y="28" fill="#A7F3D0" font-size="20" font-weight="800" letter-spacing="2">CODEX SKILL</text>
+    <text y="98" fill="#F8FAFC" font-size="62" font-weight="850">PDCA Skill Creator</text>
+    <text y="148" fill="#D8F3DC" font-size="26">Create self-checking skills that plan, execute, verify, and evolve.</text>
+    <g transform="translate(0 190)" font-size="18" font-weight="700">
+      <rect width="110" height="38" rx="19" fill="#CCFBF1"/><text x="55" y="25" text-anchor="middle" fill="#0F766E">Plan</text>
+      <rect x="128" width="90" height="38" rx="19" fill="#E0F2FE"/><text x="173" y="25" text-anchor="middle" fill="#0369A1">Do</text>
+      <rect x="236" width="116" height="38" rx="19" fill="#ECFCCB"/><text x="294" y="25" text-anchor="middle" fill="#4D7C0F">Check</text>
+      <rect x="370" width="92" height="38" rx="19" fill="#EDE9FE"/><text x="416" y="25" text-anchor="middle" fill="#6D28D9">Act</text>
+    </g>
+  </g>
+  <g transform="translate(804 74)">
+    <circle cx="150" cy="106" r="100" fill="none" stroke="#F8FAFC" stroke-opacity="0.12" stroke-width="22"/>
+    <path d="M150 6a100 100 0 0 1 96 72" fill="none" stroke="url(#accent)" stroke-width="22" stroke-linecap="round"/>
+    <path d="M248 118a100 100 0 0 1-66 83" fill="none" stroke="#A3E635" stroke-width="22" stroke-linecap="round"/>
+    <path d="M126 204a100 100 0 0 1-75-74" fill="none" stroke="#38BDF8" stroke-width="22" stroke-linecap="round"/>
+    <path d="M54 91a100 100 0 0 1 70-80" fill="none" stroke="#14B8A6" stroke-width="22" stroke-linecap="round"/>
+    <rect x="92" y="60" width="116" height="104" rx="20" fill="#F8FAFC"/>
+    <path d="M121 113l22 22 42-50" fill="none" stroke="#0F766E" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="150" y="246" text-anchor="middle" fill="#CBD5E1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18">Evidence-driven · Token-conscious</text>
+  </g>
+</svg>

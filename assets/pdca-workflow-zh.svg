@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="920" viewBox="0 0 1280 920" role="img" aria-labelledby="title desc">
+  <title id="title">PDCA 技能创建器工作流</title>
+  <desc id="desc">从用户需求到生成 PDCA 技能、运行证据、规则检查、复盘和历史记录的中文工作流示意图。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="920" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#ECFDF5"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="240" y1="240" x2="1040" y2="610" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F766E"/>
+      <stop offset="0.52" stop-color="#0284C7"/>
+      <stop offset="1" stop-color="#65A30D"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2l8 4-8 4z" fill="#64748B"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#0F172A" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <rect width="1280" height="920" rx="28" fill="url(#bg)"/>
+  <text x="68" y="82" fill="#0F172A" font-family="Inter, Microsoft YaHei, Noto Sans CJK SC, Segoe UI, Arial, sans-serif" font-size="42" font-weight="850">从业务流程到自检型技能</text>
+  <text x="70" y="124" fill="#475569" font-family="Inter, Microsoft YaHei, Noto Sans CJK SC, Segoe UI, Arial, sans-serif" font-size="22">把用户需求转化为脚本优先、证据驱动、可诊断、可复盘、可持续进化的 Codex 技能。</text>
+
+  <g font-family="Inter, Microsoft YaHei, Noto Sans CJK SC, Segoe UI, Arial, sans-serif" filter="url(#shadow)">
+    <rect x="70" y="190" width="250" height="158" rx="18" fill="#FFFFFF"/>
+    <text x="98" y="240" fill="#0F172A" font-size="25" font-weight="850">1. 用户需求</text>
+    <text x="98" y="278" fill="#475569" font-size="17">目标、输入、输出</text>
+    <text x="98" y="306" fill="#475569" font-size="17">边界和触发方式</text>
+
+    <rect x="70" y="586" width="250" height="168" rx="18" fill="#FFFFFF"/>
+    <text x="98" y="636" fill="#0F172A" font-size="25" font-weight="850">6. 证据留档</text>
+    <text x="98" y="674" fill="#475569" font-size="17">日志和输出结果</text>
+    <text x="98" y="702" fill="#475569" font-size="17">截图只引用路径</text>
+    <text x="98" y="730" fill="#475569" font-size="17">默认只读最新日志</text>
+
+    <rect x="960" y="190" width="250" height="158" rx="18" fill="#FFFFFF"/>
+    <text x="988" y="240" fill="#0F172A" font-size="25" font-weight="850">3. 技能文件</text>
+    <text x="988" y="278" fill="#475569" font-size="17">SKILL.md</text>
+    <text x="988" y="306" fill="#475569" font-size="17">scripts / references</text>
+
+    <rect x="960" y="586" width="250" height="168" rx="18" fill="#FFFFFF"/>
+    <text x="988" y="636" fill="#0F172A" font-size="25" font-weight="850">5. 历史记录</text>
+    <text x="988" y="674" fill="#475569" font-size="17">plan-history.md</text>
+    <text x="988" y="702" fill="#475569" font-size="17">创建器版本</text>
+    <text x="988" y="730" fill="#475569" font-size="17">升级记录</text>
+  </g>
+
+  <g fill="none" stroke="#64748B" stroke-width="4" marker-end="url(#arrow)">
+    <path d="M320 269h105"/>
+    <path d="M855 269h105"/>
+    <path d="M1085 348v238"/>
+    <path d="M960 670H855"/>
+    <path d="M425 670H320"/>
+    <path d="M195 586V348"/>
+  </g>
+
+  <circle cx="640" cy="460" r="226" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2" filter="url(#shadow)"/>
+  <circle cx="640" cy="460" r="166" fill="none" stroke="url(#accent)" stroke-width="24" stroke-linecap="round" stroke-dasharray="214 70"/>
+  <g font-family="Inter, Microsoft YaHei, Noto Sans CJK SC, Segoe UI, Arial, sans-serif" text-anchor="middle">
+    <g>
+      <rect x="552" y="234" width="176" height="80" rx="16" fill="#CCFBF1"/>
+      <text x="640" y="282" fill="#0F766E" font-size="26" font-weight="850">Plan</text>
+      <text x="640" y="304" fill="#0F766E" font-size="13">需求澄清</text>
+    </g>
+    <g>
+      <rect x="794" y="420" width="176" height="80" rx="16" fill="#E0F2FE"/>
+      <text x="882" y="468" fill="#0369A1" font-size="26" font-weight="850">Do</text>
+      <text x="882" y="490" fill="#0369A1" font-size="13">脚本执行</text>
+    </g>
+    <g>
+      <rect x="552" y="606" width="176" height="80" rx="16" fill="#ECFCCB"/>
+      <text x="640" y="654" fill="#4D7C0F" font-size="26" font-weight="850">Check</text>
+      <text x="640" y="676" fill="#4D7C0F" font-size="13">规则诊断</text>
+    </g>
+    <g>
+      <rect x="310" y="420" width="176" height="80" rx="16" fill="#EDE9FE"/>
+      <text x="398" y="468" fill="#6D28D9" font-size="26" font-weight="850">Act</text>
+      <text x="398" y="490" fill="#6D28D9" font-size="13">复盘进化</text>
+    </g>
+    <text x="640" y="444" fill="#0F172A" font-size="30" font-weight="850">PDCA</text>
+    <text x="640" y="480" fill="#475569" font-size="18">自检闭环</text>
+  </g>
+
+  <g font-family="Inter, Microsoft YaHei, Noto Sans CJK SC, Segoe UI, Arial, sans-serif" filter="url(#shadow)">
+    <rect x="368" y="758" width="544" height="86" rx="18" fill="#0F172A"/>
+    <text x="396" y="792" fill="#A7F3D0" font-size="18" font-weight="800">上下文成本控制</text>
+    <text x="396" y="822" fill="#E2E8F0" font-size="17">只执行脚本 · 截图仅留档 · 只读最新日志 · 历史需求按需加载</text>
+  </g>
+
+  <g font-family="Inter, Microsoft YaHei, Noto Sans CJK SC, Segoe UI, Arial, sans-serif" font-size="15">
+    <rect x="470" y="150" width="340" height="54" rx="14" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <text x="490" y="184" fill="#334155">2. 创建器应用 PDCA 阶段模板</text>
+    <rect x="470" y="716" width="340" height="54" rx="14" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <text x="490" y="750" fill="#334155">4. 生成技能通过 Act 复盘持续进化</text>
+  </g>
+</svg>

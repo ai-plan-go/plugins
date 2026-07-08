@@ -1,0 +1,20 @@
+{
+  "name": "ai-plan-go",
+  "interface": {
+    "displayName": "AI Plan Go"
+  },
+  "plugins": [
+    {
+      "name": "pdca-skill-creator",
+      "source": {
+        "source": "local",
+        "path": "./plugins/pdca-skill-creator"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
