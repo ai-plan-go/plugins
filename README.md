@@ -30,13 +30,26 @@ Generated skills are designed around four stages:
 - Generates executable scaffolds, checkers, and smoke-test entry points for automation, inspection, monitoring, reporting, and crawler-style skills.
 - Requires a capability matrix that clearly separates implemented, placeholder, and pending capabilities.
 - Requires Check scripts to consume rule files, reducing the risk that check rules live only in documentation.
+- Requires rule files, output schemas, Do-script outputs, Check-script fields, and deployment contracts to stay consistent.
+- Requires crawler-style skills to actually consume `references/selectors.yaml`, not merely generate the file.
 - Supports post-generation smoke tests for script syntax, sample execution paths, exit codes, and key artifacts.
+- Generates a Codex-installable plugin directory with `.codex-plugin/plugin.json` and `skills/` when the user asks for a plugin.
 - Supports structured logs, health diagnosis tables, and P0/P1/P2 priority levels.
 - Encourages script-first execution to reduce repeated reasoning and token usage.
 - Treats screenshots as archived evidence, not default visual-analysis context.
 - Reads only the latest runtime log by default to avoid context bloat.
 - Requires `references/plan-history.md` to preserve historical requirements and decisions.
 - Preserves creator source, version, and generation date so old skills can be upgraded later.
+
+## 0.2.3 Postmortem Adjustments: Installable Plugins And Contract Consistency
+
+Observed failure: a generated business skill could be an L3 scaffold but still have mismatched rule/output fields, selector files that were not actually consumed by scripts, smoke tests that tolerated unexpected failures, zip archives containing runtime caches, and plugin requests that only produced an archive instead of a Codex-installable plugin directory. Version `0.2.3` adjusts the creator rules as follows:
+
+- **Adjusted plugin delivery format**: When the user asks for a plugin, Codex-installable output, or direct installation, the creator must generate a plugin directory with `.codex-plugin/plugin.json` and `skills/`; zip files are only optional transport archives.
+- **Adjusted output contract checks**: `check-rules.yaml.required_outputs`, `output-schema.json`, Do-script `outputs`, Check-script fields, and deployment contracts must agree.
+- **Adjusted selector consumption requirements**: If `references/selectors.yaml` is generated, the collection script must read and use it.
+- **Adjusted smoke-test failure classification**: Empty dry-run business fields can be expected, but field-name mismatches, unread rule files, schema mismatches, and missing artifact paths are unexpected failures.
+- **Adjusted clean packaging rules**: Final skill packages and plugin directories must exclude `__pycache__/`, `*.pyc`, `work_smoke/`, temporary logs, and local self-check outputs.
 
 ## 0.2.2 Postmortem Adjustments: Business Core First
 
@@ -108,7 +121,7 @@ The simplest way is to add this repository as a Codex plugin marketplace.
 - Marketplace: `ai-plan-go`
 - Published repository: <https://github.com/ai-plan-go/plugins>
 - Git URL: `https://github.com/ai-plan-go/plugins.git`
-- Current version: `0.2.2`
+- Current version: `0.2.3`
 
 Future sessions should use this section, `marketplace.json`, and `plugins/pdca-skill-creator/.codex-plugin/plugin.json` to quickly identify the published plugin.
 
@@ -191,6 +204,7 @@ The goal is not to make AI think harder every time. The goal is to make repeatab
 
 ## Version
 
-Current creator version: `0.2.2`
+Current creator version: `0.2.3`
 
 Source repository: <https://github.com/ai-plan-go/plugins.git>
+

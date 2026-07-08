@@ -41,7 +41,7 @@
 
 - 创建器：pdca-skill-creator
 - 来源仓库：https://github.com/ai-plan-go/plugins.git
-- 创建器版本：0.2.2
+- 创建器版本：0.2.3
 - 生成日期：YYYY-MM-DD
 - 成熟度等级：L1/L2/L3/L4
 - 当前成熟度说明：已实现能力、占位能力和待确认能力
@@ -80,7 +80,7 @@
 
 - 创建器：pdca-skill-creator
 - 来源仓库：https://github.com/ai-plan-go/plugins.git
-- 创建器版本：0.2.2
+- 创建器版本：0.2.3
 - 生成日期：YYYY-MM-DD
 - 成熟度等级：L1/L2/L3/L4
 - 当前成熟度说明：
@@ -143,6 +143,8 @@
 - 生成 `scripts/collect_*`、`scripts/crawler_*`、`scripts/extract_*` 或在 `scripts/run_task.py` 中提供等价采集模块。
 - 实现 URL 构造或 URL 读取、Playwright 页面打开、超时处理、页面标题或基础 DOM 提取、截图保存、结构化字段写入和错误分类。
 - 页面选择器未知时，创建 `references/selectors.yaml` 或等价配置文件，记录候选选择器、fallback 策略和待确认项。
+- 如果创建了 `references/selectors.yaml`，采集脚本必须实际读取并消费该配置。不得只生成选择器文件，却在脚本中硬编码少量选择器或完全跳过选择器文件。
+- 采集脚本应提供通用字段提取路径：加载选择器、按字段尝试候选选择器、fallback 到页面标题或正文文本、写入未命中诊断和证据路径。
 - 登录、验证码、代理或风控未知时，输出 `blocked_by_login`、`captcha_detected`、`proxy_required` 等诊断，并保留可运行的访问、截图和失败证据链路。
 - 对用户要求的每个核心字段，生成字段提取矩阵，标注提取策略、选择器或 fallback、证据路径和未知项。
 
@@ -418,3 +420,39 @@ Check 退出码：
 ```
 
 如果自检无法运行，写明阻断原因，并将当前成熟度降到能被证据支撑的等级。
+
+### 自检必须覆盖的契约一致性
+
+自检不能只接受任意非零退出码。必须区分预期失败和非预期失败：
+
+- dry-run 核心字段为空、基准被保护，可以是预期失败。
+- 规则文件、输出 schema、Do 脚本实际输出、Check 脚本检查和部署契约的字段名不一致，必须判为非预期失败。
+- `references/check-rules.yaml` 的 `required_outputs` 必须能在 Do 阶段结构化结果的 `outputs` 中找到对应路径，或明确记录为待确认能力。
+- `references/output-schema.json` 的输出字段必须和 Do 阶段实际输出字段一致。
+- 爬虫类技能如果存在 `references/selectors.yaml`，必须检查采集脚本是否读取该文件并用于字段提取。
+- 成品目录不得包含 `__pycache__/`、`*.pyc`、`work_smoke/`、临时日志或本地自检输出。
+
+### 插件交付格式
+
+如果用户要求“插件”“Codex 可安装”“直接安装”或“发布到插件市场”，最终交付必须是可安装插件目录，而不是只有 zip：
+
+```text
+{PLUGIN_NAME}/
+├── .codex-plugin/
+│   └── plugin.json
+├── skills/
+│   └── {SKILL_NAME}/
+│       ├── SKILL.md
+│       ├── agents/
+│       ├── scripts/
+│       ├── references/
+│       └── assets/
+└── assets/
+```
+
+要求：
+
+- `.codex-plugin/plugin.json` 必须存在，并让 `skills` 指向 `./skills/`。
+- `skills/{SKILL_NAME}/SKILL.md` 必须存在且 frontmatter 有效。
+- zip 只能作为附加传输包；如果生成 zip，解压后必须仍是上述插件目录结构。
+- 没有 `.codex-plugin/plugin.json` 的产物只能称为技能目录或技能包，不能称为可安装插件。

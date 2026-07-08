@@ -9,7 +9,7 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 
 本技能是“元技能”：它负责创建或改进另一个具备 PDCA 闭环能力的具体业务技能。
 
-当前创建器版本：`0.2.2`
+当前创建器版本：`0.2.3`
 
 来源仓库：`https://github.com/ai-plan-go/plugins.git`
 
@@ -19,7 +19,7 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 - 插件市场：`ai-plan-go`
 - 发布仓库：`https://github.com/ai-plan-go/plugins`
 - Git 地址：`https://github.com/ai-plan-go/plugins.git`
-- 当前版本：`0.2.2`
+- 当前版本：`0.2.3`
 - 识别说明：后续其他会话需要定位或发布本技能时，优先查看本节、`plugins-publish/marketplace.json` 和 `plugins-publish/plugins/pdca-skill-creator/.codex-plugin/plugin.json`。
 
 ## 核心原则
@@ -33,6 +33,8 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 - 对业务执行类技能，先保证最小业务闭环，再补齐 PDCA 包装；不得让流程、报表、日志和复盘结构挤掉核心业务实现。
 - 保守标注生成技能的成熟度等级，避免把脚手架、占位实现或待确认外部能力误认为已经可部署运行。
 - 生成后必须给出能力矩阵和自检结果，让用户知道哪些能力已实现、哪些只是占位、哪些还待确认。
+- 如果用户要求“插件”“Codex 可安装”“直接安装”或交付物需要进入 Codex 插件市场，默认交付可安装插件目录，而不是只交付 zip 压缩包。
+- 生成后必须做契约一致性检查，确认规则文件、输出 schema、脚本实际输出、smoke test 预期和发布目录格式互相一致。
 - 将详细模板放入 `references/`，保持 `SKILL.md` 易读且可触发。
 
 ## 输入分析
@@ -85,6 +87,37 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 - `assets/`：模板文件、示例文件、固定素材；仅在确实需要时创建。
 
 不要创建无关的 README、安装说明、变更日志或过程记录。
+
+## 生成的插件结构
+
+当用户要求生成“插件”、要求“直接可以在 Codex 上安装”，或明确希望把业务技能作为 Codex 插件分发时，不要只生成 `{SKILL_NAME}.zip`。zip 只能作为便于传输的附加归档，不能作为唯一交付物。
+
+默认交付以下可安装插件目录：
+
+```text
+{PLUGIN_NAME}/
+├── .codex-plugin/
+│   └── plugin.json
+├── skills/
+│   └── {SKILL_NAME}/
+│       ├── SKILL.md
+│       ├── agents/
+│       │   └── openai.yaml
+│       ├── scripts/
+│       ├── references/
+│       └── assets/
+└── assets/
+```
+
+插件目录要求：
+
+- `.codex-plugin/plugin.json` 必须存在，包含 `name`、`version`、`description`、`skills` 和 `interface` 基本信息。
+- `skills` 字段应指向 `./skills/`，并确保技能位于 `skills/{SKILL_NAME}/SKILL.md`。
+- 插件名和技能名都只使用小写英文字母、数字和连字符。
+- 如果同时生成 zip，zip 内容必须以插件目录为根，解压后仍能看到 `.codex-plugin/plugin.json`。
+- 对个人本地安装，优先提供插件目录路径；对市场发布，优先放入 `plugins-publish/plugins/{PLUGIN_NAME}/` 这类发布目录。
+- 不要把仅含 `SKILL.md` 的普通技能目录伪装成插件；没有 `.codex-plugin/plugin.json` 就只能称为技能目录或技能包。
+- 打包前必须排除 `__pycache__/`、`*.pyc`、`work_smoke/`、临时日志、临时输出和本地测试目录。
 
 ## 产物成熟度等级
 
@@ -147,6 +180,8 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 - 必须生成 `scripts/collect_*`、`scripts/crawler_*`、`scripts/extract_*` 或在 `scripts/run_task.py` 中提供等价采集模块，不能只有 `inspect_item_stub` 这类占位函数。
 - 必须实现 URL 构造或 URL 读取、Playwright 页面打开、超时处理、页面标题或基础 DOM 提取、截图保存、结构化字段写入和错误分类。
 - 页面选择器未知时，必须创建 `references/selectors.yaml` 或等价配置文件，给出候选选择器、fallback 策略和待确认项；不得因此完全跳过页面访问。
+- 如果生成了 `references/selectors.yaml`，采集脚本必须实际读取并消费该文件；不得只在文档中声明选择器配置，实际脚本仍硬编码少量选择器。
+- 采集脚本应包含通用提取函数，例如加载选择器、按字段尝试候选选择器、fallback 到页面标题/正文文本、记录未命中诊断和证据路径。
 - 登录、验证码、代理或风控未知时，应输出明确的 `blocked_by_login`、`captcha_detected`、`proxy_required` 等诊断，但仍应保留可运行的访问、截图和失败证据链路。
 - 对用户要求的每个核心字段，必须在“字段提取矩阵”中标注提取策略、选择器或 fallback、证据路径和未知项。
 - 如果真实采集框架没有生成，当前成熟度最高只能是 `L2 规则型`；如果框架存在但字段选择器待确认，最高只能是 `L3 可执行脚手架`。
@@ -181,6 +216,18 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 
 脚本可以先是保守骨架，但必须能完成参数解析、目录校验、日志写入、结构化占位输出和 Check 断言。不得在文档中写“执行脚本”却不创建 `scripts/`。如果脚本只是保守骨架，必须触发成熟度降级规则。
 
+### 输出契约一致性
+
+L3/L4 技能必须让以下契约互相一致：
+
+- `references/check-rules.yaml` 中的 `required_outputs`。
+- `references/output-schema.json` 或等价 schema 中的输出字段。
+- `scripts/run_task.py` 或等价 Do 脚本实际写入的 `outputs` 字段。
+- `scripts/check_outputs.py` 实际检查的字段名。
+- `references/deployment-contract.md` 对输出文件的描述。
+
+如果出现 `run_log` 与 `log_file` 这类字段名不一致，必须在生成后自检中判为非预期失败，并在交付前修复。不得把这类契约错误解释成业务数据质量问题。
+
 ## 必读模板
 
 创建或大幅更新 PDCA 业务技能时，读取 `references/pdca-stage-template.md`，并将模板业务化。
@@ -189,7 +236,7 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 
 生成的业务技能还应在 `references/plan-history.md` 保留历史需求和 Plan 记录，用于 Act 复盘优化时按需披露加载，避免迭代时丢失早期需求、约束和决策原因。
 
-生成的业务技能必须声明生成来源：在 `SKILL.md` 正文靠前位置写明基于 `pdca-skill-creator` 生成，并记录来源仓库地址、创建器版本、生成日期和成熟度等级。默认创建器版本使用当前版本 `0.2.2`；若版本未知，标记为 `unknown`，不要省略该字段。
+生成的业务技能必须声明生成来源：在 `SKILL.md` 正文靠前位置写明基于 `pdca-skill-creator` 生成，并记录来源仓库地址、创建器版本、生成日期和成熟度等级。默认创建器版本使用当前版本 `0.2.3`；若版本未知，标记为 `unknown`，不要省略该字段。
 
 ## 创建流程
 
@@ -256,6 +303,7 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 - Do 脚本负责采集、处理、生成结构化结果和证据；Check 脚本负责校验完整性、质量标记、业务规则和基准更新资格。
 - L3/L4 的 Check 脚本必须读取并应用 `references/check-rules.yaml`、`references/output-schema.json` 或等价规则文件；允许保留少量结构性兜底检查，但业务阈值、必需产物、证据要求和 P0/P1/P2 规则必须优先来自规则文件。
 - Check 脚本必须给出机器可读结果，例如 JSON 诊断、退出码或固定表格。
+- Check 脚本应优先使用结构化解析器读取规则文件，例如 Python 中优先使用 `yaml.safe_load`；如果依赖不可用，必须明确输出依赖缺失诊断，不能用脆弱的正则解析复杂 YAML 规则。
 - 退出码建议：`0` 表示通过，`1` 表示 P1/P2 或检查不通过，`2` 表示 P0 或执行阻断。
 - 日志文件名应包含时间、项目或任务名；Check 默认定位最新一个日志文件。
 - 对未知凭据、未知选择器、未知报表表头，不生成假实现；生成参数、校验错误和待确认项。
@@ -272,6 +320,9 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 - 对 Python 脚本做只读语法检查，避免在只读成品目录写入 `__pycache__`。
 - 使用最小样例输入运行初始化、Do 和 Check 链路。
 - 校验关键产物是否存在，例如结构化结果、日志、检查结果、报表或报告。
+- 校验输出契约一致性：规则要求、schema、Do 脚本输出、Check 脚本检查和部署契约必须使用同一组字段名。
+- 对爬虫类技能，校验采集脚本是否实际读取 `references/selectors.yaml`，并至少通过一个通用提取函数或字段提取路径消费该配置。
+- 区分预期失败和非预期失败：dry-run 核心字段为空可以是预期失败，但字段名不一致、规则未读取、产物路径缺失、schema 不匹配都必须判为非预期失败。
 - 记录 Do 和 Check 的退出码，并解释退出码是否符合预期。
 - 将自检摘要写入 `references/plan-history.md` 的本轮 Plan，或写入 `references/deployment-contract.md` 的验收记录。
 
@@ -301,6 +352,8 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 - 如果存在 Check 阶段，确认有检查规则文件；L3/L4 技能还应有 `scripts/check_outputs.py` 或等价检查器，并确认检查器读取规则文件而不是只硬编码规则。
 - 如果存在定时或部署描述，确认有入口脚本、参数样例、失败退出码和最新日志定位方式。
 - 如果标注 L3/L4，确认已运行或生成 `scripts/smoke_test.py`，并记录自检结果。
+- 如果用户要求插件形态，确认存在 `.codex-plugin/plugin.json`、`skills/{SKILL_NAME}/SKILL.md`，且最终交付包含可安装插件目录；zip 只能作为附加归档。
+- 确认成品目录不包含 `__pycache__/`、`*.pyc`、`work_smoke/`、临时日志、临时输出或本地测试目录。
 - 如果只能生成 L1/L2，必须在交付说明中列出不能直接运行的原因。
 
 ## 禁止事项
@@ -314,5 +367,8 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 - 不要把 L1/L2 规范型产物描述成已经可以自动运行。
 - 不要把只有定时包装但核心业务仍是占位的技能标为 L4。
 - 不要把检查规则写进 `references/check-rules.yaml` 后又让检查脚本完全不读取。
+- 不要把选择器写进 `references/selectors.yaml` 后又让采集脚本完全不读取。
+- 不要只交付 zip 压缩包却声称是 Codex 可直接安装插件；可安装插件必须有 `.codex-plugin/plugin.json` 和 `skills/` 目录。
+- 不要把 `__pycache__`、`work_smoke` 或本地自检产物打进最终插件包。
 - 不要让 PDCA 阶段说明、报表、日志、基准和复盘结构挤掉真实业务执行。
 - 不要在用户明确要求爬取页面时，只生成 `inspect_item_stub`、空字段和 `crawler_not_configured`；必须生成真实采集框架或把成熟度降到 L2。

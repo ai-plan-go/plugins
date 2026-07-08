@@ -30,13 +30,26 @@
 - 为自动化、巡检、监控、报表和爬虫类技能生成可执行脚手架、检查器和自检入口。
 - 要求生成能力矩阵，清楚标记已实现、占位和待确认能力。
 - 要求 Check 脚本读取规则文件，减少检查规则写在文档里却没有被执行的风险。
+- 要求规则文件、输出 schema、Do 脚本输出、Check 脚本检查和部署契约字段保持一致。
+- 要求爬虫类技能真实消费 `references/selectors.yaml`，不能只生成配置文件却不读取。
 - 支持生成后 smoke test，校验脚本语法、样例链路、退出码和关键产物。
+- 支持在用户要求插件时生成含 `.codex-plugin/plugin.json` 和 `skills/` 的 Codex 可安装插件目录。
 - 支持生成运行日志、异常诊断表和 P0/P1/P2 优先级判断。
 - 引导技能使用脚本执行任务，减少口头推断和重复 token 消耗。
 - 要求截图只作为证据留档，不默认进入上下文做视觉分析。
 - 要求历史日志默认只读取最新一次，避免日志堆积撑大上下文。
 - 要求维护 `references/plan-history.md`，避免 Act 复盘优化时丢失历史需求。
 - 要求生成的技能保留来源、版本和升级说明，方便后续用新版创建器迁移。
+
+## 0.2.3 问题复盘与调整：可安装插件与契约一致性
+
+本轮复盘的问题：生成出的业务技能虽然具备 L3 脚手架，但可能出现规则字段和实际输出字段不一致、选择器配置没有被脚本真实消费、smoke test 对非预期失败不敏感、成品 zip 带入运行缓存，以及用户要求插件时只交付压缩包而非 Codex 可安装插件目录。`0.2.3` 做了以下调整：
+
+- **调整插件交付格式**：用户要求“插件”“Codex 可安装”“直接安装”时，默认生成含 `.codex-plugin/plugin.json` 和 `skills/` 的可安装插件目录；zip 只能作为附加归档。
+- **调整输出契约检查**：`check-rules.yaml.required_outputs`、`output-schema.json`、Do 脚本 `outputs`、Check 脚本检查字段和部署契约必须一致。
+- **调整选择器消费要求**：如果生成 `references/selectors.yaml`，采集脚本必须实际读取并消费该文件。
+- **调整 smoke test 判错**：dry-run 数据为空可以是预期失败，但字段名不一致、规则未读取、schema 不匹配和产物路径缺失必须判为非预期失败。
+- **调整成品清理规则**：最终技能包或插件目录不得包含 `__pycache__/`、`*.pyc`、`work_smoke/`、临时日志和本地自检输出。
 
 ## 0.2.2 问题复盘与调整：业务核心优先
 
@@ -107,7 +120,7 @@ pdca-skill-creator/
 - 插件市场：`ai-plan-go`
 - 发布仓库：<https://github.com/ai-plan-go/plugins>
 - Git 地址：`https://github.com/ai-plan-go/plugins.git`
-- 当前版本：`0.2.2`
+- 当前版本：`0.2.3`
 
 后续其他会话需要识别本插件时，优先查看本节、`marketplace.json` 和 `plugins/pdca-skill-creator/.codex-plugin/plugin.json`。
 
@@ -190,6 +203,7 @@ cp -R plugins/pdca-skill-creator/skills/pdca-skill-creator ~/.codex/skills/
 
 ## 版本
 
-当前创建器版本：`0.2.2`
+当前创建器版本：`0.2.3`
 
 来源仓库：<https://github.com/ai-plan-go/plugins.git>
+
