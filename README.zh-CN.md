@@ -41,6 +41,15 @@
 - 要求维护 `references/plan-history.md`，避免 Act 复盘优化时丢失历史需求。
 - 要求生成的技能保留来源、版本和升级说明，方便后续用新版创建器迁移。
 
+## 0.2.6 发版亮点：生成技能双层评分
+
+`0.2.6` 将通用技能规范评分和业务用例评分拆开。这样既能保留亚马逊 ASIN 用例作为创建器回归测试，又不会把亚马逊关键词误当成所有生成技能的默认验收标准。
+
+- **通用质量门禁**：新增 `scripts/run_generated_skill_quality_gate.py`，不绑定具体业务，只检查 PDCA 阶段、成熟度、能力矩阵、业务核心计划、脚手架、契约一致性、证据日志、自我优化分层和清洁交付。
+- **生成技能自带通用评分入口**：新生成的技能应包含 `scripts/score_skill_quality.py` 和 `references/skill-quality-rubric.json`，后续可以脱离创建器单独验收。
+- **生成技能自带业务评分入口**：新生成的技能应包含 `scripts/run_business_use_case_test.py` 和 `references/business-use-case-profile.json`，由用户自己的业务目标、核心动作、输入输出、业务规则、证据要求、样例数据和验收阈值生成。
+- **评分边界更清楚**：通用评分验证 PDCA 技能契约，业务评分验证具体场景；账号、权限、网络、选择器或人工导出缺失时，都不能伪造成功。
+
 ## 0.2.5 发版亮点：可举证自我优化与插件形态测试
 
 `0.2.5` 让创建器更适合作为团队工作流工具来宣发、评审和验收。本版本把“自我优化进化”从泛泛承诺变成可检查的证据模型，同时让用例测试脚本能够同时识别普通技能目录和 Codex 可安装插件目录。
@@ -162,7 +171,7 @@ pdca-skill-creator/
 - 插件市场：`ai-plan-go`
 - 发布仓库：<https://github.com/ai-plan-go/plugins>
 - Git 地址：`https://github.com/ai-plan-go/plugins.git`
-- 当前版本：`0.2.5`
+- 当前版本：`0.2.6`
 
 后续其他会话需要识别本插件时，优先查看本节、`marketplace.json` 和 `plugins/pdca-skill-creator/.codex-plugin/plugin.json`。
 
@@ -245,7 +254,7 @@ cp -R plugins/pdca-skill-creator/skills/pdca-skill-creator ~/.codex/skills/
 
 ## 版本
 
-当前创建器版本：`0.2.5`
+当前创建器版本：`0.2.6`
 
 来源仓库：<https://github.com/ai-plan-go/plugins.git>
 

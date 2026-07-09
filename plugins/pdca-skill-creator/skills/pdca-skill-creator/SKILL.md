@@ -9,7 +9,7 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 
 本技能是“元技能”：它负责创建或改进另一个具备 PDCA 闭环能力的具体业务技能。
 
-当前创建器版本：`0.2.5`
+当前创建器版本：`0.2.6`
 
 来源仓库：`https://github.com/ai-plan-go/plugins.git`
 
@@ -19,7 +19,7 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 - 插件市场：`ai-plan-go`
 - 发布仓库：`https://github.com/ai-plan-go/plugins`
 - Git 地址：`https://github.com/ai-plan-go/plugins.git`
-- 当前版本：`0.2.5`
+- 当前版本：`0.2.6`
 - 识别说明：后续其他会话需要定位或发布本技能时，优先查看本节、`plugins-publish/marketplace.json` 和 `plugins-publish/plugins/pdca-skill-creator/.codex-plugin/plugin.json`。
 
 ## 核心原则
@@ -74,8 +74,12 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 │   ├── run_task.py
 │   ├── check_outputs.py
 │   ├── smoke_test.py
-│   └── run_daily_check.ps1
+│   ├── run_daily_check.ps1
+│   ├── score_skill_quality.py
+│   └── run_business_use_case_test.py
 ├── references/
+│   ├── skill-quality-rubric.json
+│   └── business-use-case-profile.json
 └── assets/
 ```
 
@@ -85,6 +89,10 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 - `agents/openai.yaml`：技能列表中的显示名称、简短说明和默认提示。
 - `scripts/`：Do 和 Check 阶段需要稳定执行的脚本。
 - `references/`：检查规则、字段说明、异常诊断表、业务标准、阶段模板和历史需求记录。
+- `scripts/score_skill_quality.py`：通用规范评分脚本，只检查 PDCA 结构、成熟度、契约、证据、自我优化和打包清洁度，不包含业务用例关键词。
+- `scripts/run_business_use_case_test.py`：业务专属评分脚本，根据本次用户需求、验收规则和核心字段生成，检查业务覆盖度和样例链路。
+- `references/skill-quality-rubric.json`：通用规范评分维度和通过线。
+- `references/business-use-case-profile.json`：业务专属评分 profile，记录核心动作、必填输入、关键字段、输出产物、业务规则和样例数据。
 - `assets/`：模板文件、示例文件、固定素材；仅在确实需要时创建。
 
 不要创建无关的 README、安装说明、变更日志或过程记录。
@@ -265,7 +273,54 @@ L3/L4 技能必须让以下契约互相一致：
 
 生成的业务技能还应在 `references/plan-history.md` 保留历史需求和 Plan 记录，用于 Act 复盘优化时按需披露加载，避免迭代时丢失早期需求、约束和决策原因。
 
-生成的业务技能必须声明生成来源：在 `SKILL.md` 正文靠前位置写明基于 `pdca-skill-creator` 生成，并记录来源仓库地址、创建器版本、生成日期和成熟度等级。默认创建器版本使用当前版本 `0.2.5`；若版本未知，标记为 `unknown`，不要省略该字段。
+生成的业务技能必须声明生成来源：在 `SKILL.md` 正文靠前位置写明基于 `pdca-skill-creator` 生成，并记录来源仓库地址、创建器版本、生成日期和成熟度等级。默认创建器版本使用当前版本 `0.2.6`；若版本未知，标记为 `unknown`，不要省略该字段。
+
+## 生成技能质量门禁
+
+每次生成或大幅升级业务技能时，必须增加“生成技能质量门禁”，把通用规范验收和业务用例验收分开，避免把某个固定用例的业务关键词套到所有技能上。
+
+### 通用规范评分
+
+生成的业务技能必须包含 `scripts/score_skill_quality.py` 和 `references/skill-quality-rubric.json`。该评分只检查所有 PDCA 技能都应满足的共性要求，不包含亚马逊、报表、审批等具体业务词。
+
+通用规范评分默认满分 100，通过线 85，且不能存在 P0/P1 阻断项。最低维度包括：
+
+| 维度 | 建议分值 | 检查重点 |
+|---|---:|---|
+| PDCA 阶段契约 | 12 | Plan、Do、Check、Act 是否有输入、动作、产物、异常处理 |
+| 生成来源与成熟度 | 12 | 创建器版本、目标成熟度、当前成熟度、降级说明 |
+| 业务核心优先 | 10 | 核心动作、业务核心实现计划、实现矩阵和缺口 |
+| 能力矩阵 | 10 | 已实现、占位、待确认、证据、缺口是否清楚 |
+| 可执行脚手架 | 14 | init、run、check、smoke、退出码、日志、结构化输出 |
+| 契约一致性 | 14 | check-rules、output-schema、Do 输出、Check 检查、deployment-contract |
+| 证据与日志 | 10 | 证据路径、日志、诊断表、P0/P1/P2 |
+| 自我优化分层 | 10 | 机制、可执行、有效性、复测入口、复测证据 |
+| 清洁交付 | 8 | 不含 `__pycache__`、`*.pyc`、`work_smoke`、临时输出 |
+
+通用规范评分脚本可以基于本创建器的 `scripts/run_generated_skill_quality_gate.py` 生成或裁剪，但最终必须落在生成技能自己的 `scripts/score_skill_quality.py` 中，方便脱离创建器单独验收。
+
+### 业务用例评分
+
+生成的业务技能必须同时包含 `scripts/run_business_use_case_test.py` 和 `references/business-use-case-profile.json`。该评分根据用户本次业务需求生成，不使用固定亚马逊用例，除非用户的业务本身就是亚马逊巡检。
+
+`references/business-use-case-profile.json` 至少记录：
+
+- `business_goal`：业务目标。
+- `core_actions`：没有它就不算完成业务的核心动作。
+- `required_inputs`：必填输入和样例输入。
+- `required_outputs`：必须生成的文件、字段、报告、日志或证据。
+- `business_rules`：业务规则、阈值、分级和失败条件。
+- `evidence_requirements`：截图、日志、导出文件、结构化结果等证据要求。
+- `expected_modes`：`dry-run`、`stub`、`live` 等模式的预期行为。
+- `acceptance_threshold`：业务用例通过线和 P0/P1 判定。
+
+`scripts/run_business_use_case_test.py` 必须读取该 profile，执行或模拟最小样例链路，输出：
+
+- `business-use-case-test.json`
+- `business-use-case-test-report.md`
+- `business-act-improvements.md`
+
+如果业务依赖外部账号、网络、审批权限、页面选择器或人工导出文件，业务用例评分脚本不得伪造成功；应输出阻断诊断，并把对应能力标为“待确认”或“未验证”。
 
 ## 创建流程
 
@@ -283,9 +338,12 @@ L3/L4 技能必须让以下契约互相一致：
 10. 创建或更新技能文件。
 11. 生成能力矩阵和业务核心实现矩阵，标注已实现、占位和待确认能力。
 12. 生成“自我优化能力分层”小节，明确自我优化机制、自我优化可执行、自我进化有效性的状态、证据、复测入口和不得宣称的边界。
-13. 对 L3/L4 技能执行或生成 `scripts/smoke_test.py`，验证语法、最小样例链路、退出码和关键产物；无法执行时写明阻断原因。
-14. 验证技能结构、触发描述、阶段完整性、来源信息、成熟度等级、业务核心实现、异常诊断格式、规则文件消费情况、自我优化分层和可运行性缺口。
-15. 向用户说明生成结果、业务核心能力、目标成熟度、当前成熟度、已可运行内容、自检结果和下一步补齐项。
+13. 生成 `scripts/score_skill_quality.py` 和 `references/skill-quality-rubric.json`，用于通用规范评分。
+14. 生成 `scripts/run_business_use_case_test.py` 和 `references/business-use-case-profile.json`，用于本业务专属评分。
+15. 对 L3/L4 技能执行或生成 `scripts/smoke_test.py`，验证语法、最小样例链路、退出码和关键产物；无法执行时写明阻断原因。
+16. 执行或生成通用规范评分和业务用例评分；如果不能运行，必须说明阻断原因，并把当前成熟度降到证据能支撑的等级。
+17. 验证技能结构、触发描述、阶段完整性、来源信息、成熟度等级、业务核心实现、异常诊断格式、规则文件消费情况、自我优化分层、通用规范评分、业务用例评分和可运行性缺口。
+18. 向用户说明生成结果、业务核心能力、目标成熟度、当前成熟度、已可运行内容、自检结果、通用评分结果、业务评分结果和下一步补齐项。
 
 ## 用户意图识别
 

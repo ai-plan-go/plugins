@@ -41,6 +41,15 @@ Generated skills are designed around four stages:
 - Requires `references/plan-history.md` to preserve historical requirements and decisions.
 - Preserves creator source, version, and generation date so old skills can be upgraded later.
 
+## 0.2.6 Release Highlights: Two-Layer Generated Skill Scoring
+
+Version `0.2.6` separates generic skill-quality scoring from business-specific use-case scoring. This keeps the Amazon ASIN creator test useful for creator regression while preventing Amazon-specific keywords from becoming the default standard for every generated skill.
+
+- **Generic quality gate**: Adds `scripts/run_generated_skill_quality_gate.py`, a business-neutral checker for PDCA stages, maturity, capability matrices, business-core planning, scaffolds, contracts, evidence, self-optimization layers, and clean packaging.
+- **Generated skill self-check entry**: New generated skills should include `scripts/score_skill_quality.py` and `references/skill-quality-rubric.json` so they can be evaluated independently of the creator.
+- **Business-specific scoring entry**: New generated skills should include `scripts/run_business_use_case_test.py` and `references/business-use-case-profile.json`, created from the user's own business goal, core actions, inputs, outputs, rules, evidence, sample data, and acceptance thresholds.
+- **Clear scoring boundary**: The generic score validates the PDCA skill contract. The business score validates the chosen scenario. Neither should fake success when accounts, permissions, network access, selectors, or manual exports are still missing.
+
 ## 0.2.5 Release Highlights: Evidence-Ready Self-Optimization And Plugin-Aware Testing
 
 Version `0.2.5` makes the creator easier to promote, review, and accept as a team workflow tool. The release turns "self-improving" from a broad promise into a checkable evidence model, and it improves the use-case tester so both plain skill folders and Codex-installable plugin folders can be tested without confusion.
@@ -163,7 +172,7 @@ The simplest way is to add this repository as a Codex plugin marketplace.
 - Marketplace: `ai-plan-go`
 - Published repository: <https://github.com/ai-plan-go/plugins>
 - Git URL: `https://github.com/ai-plan-go/plugins.git`
-- Current version: `0.2.5`
+- Current version: `0.2.6`
 
 Future sessions should use this section, `marketplace.json`, and `plugins/pdca-skill-creator/.codex-plugin/plugin.json` to quickly identify the published plugin.
 
@@ -246,7 +255,7 @@ The goal is not to make AI think harder every time. The goal is to make repeatab
 
 ## Version
 
-Current creator version: `0.2.5`
+Current creator version: `0.2.6`
 
 Source repository: <https://github.com/ai-plan-go/plugins.git>
 

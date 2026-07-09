@@ -45,7 +45,7 @@
 
 - 创建器：pdca-skill-creator
 - 来源仓库：https://github.com/ai-plan-go/plugins.git
-- 创建器版本：0.2.4
+- 创建器版本：0.2.6
 - 生成日期：YYYY-MM-DD
 - 成熟度等级：L1/L2/L3/L4
 - 当前成熟度说明：已实现能力、占位能力和待确认能力
@@ -86,6 +86,20 @@ P2 问题：
 ```
 
 如果连续多轮仍未通过，必须停止并输出剩余缺口、阻断原因和下一步需要人工确认的问题，不能把问题转交给用户做无说明的手动补测。
+
+## 生成技能质量门禁
+
+每个被生成的业务技能都应包含两类评分入口：
+
+- `scripts/score_skill_quality.py`：通用规范评分，不包含具体业务关键词，检查 PDCA 阶段、成熟度、能力矩阵、业务核心、脚手架、契约一致性、证据日志、自我优化分层和清洁交付。
+- `scripts/run_business_use_case_test.py`：业务专属评分，读取 `references/business-use-case-profile.json`，根据本业务目标、核心动作、输入、输出、规则、证据和样例数据评分。
+
+同时生成以下 reference 文件：
+
+- `references/skill-quality-rubric.json`：通用规范评分维度、分值、通过线和 P0/P1 条件。
+- `references/business-use-case-profile.json`：业务目标、核心动作、必填输入、必需输出、业务规则、证据要求、样例数据、模式预期和验收阈值。
+
+通用评分和业务评分都应默认采用 100 分制、85 分通过，且没有 P0/P1 阻断项才可通过。业务依赖外部账号、网络、权限或人工输入时，不得伪造成功，应输出阻断诊断并标记为待确认。
 
 ## 历史需求记录：references/plan-history.md
 
@@ -226,6 +240,8 @@ P2 问题：
 - 判断当前成熟度等级；如存在 stub、TODO、not_configured、外部权限缺口或未完成自检，必须触发成熟度降级。
 - 判断自我优化进化能力等级；静态生成物只能证明机制存在，运行后才能证明可执行，多轮复测后才能证明有效性。
 - 对 L3/L4 技能，生成或更新最小可运行脚手架：`scripts/init_project.py`、`scripts/run_task.py`、`scripts/check_outputs.py`、`scripts/smoke_test.py`，以及需要定时执行时的入口脚本。
+- 生成或更新通用规范评分入口：`scripts/score_skill_quality.py` 和 `references/skill-quality-rubric.json`。
+- 生成或更新业务用例评分入口：`scripts/run_business_use_case_test.py` 和 `references/business-use-case-profile.json`。
 - 生成能力矩阵，逐项标注已实现、占位和待确认能力。
 - 生成业务核心实现矩阵；如果核心动作是占位，交付说明必须把该缺口放在最前面。
 - 将本轮确认的需求、边界、关键决策和变更原因追加到 `references/plan-history.md`。
@@ -243,6 +259,8 @@ P2 问题：
 - 业务核心实现计划和业务核心实现矩阵
 - L3/L4 的脚本清单、结构化输出格式和检查入口
 - L3/L4 的生成后自检方案或自检结果
+- 通用规范评分结果或无法运行原因
+- 业务用例评分结果或无法运行原因
 - 日志和证据要求
 - 下一步执行计划
 - 更新后的历史需求记录
