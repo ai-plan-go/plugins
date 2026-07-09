@@ -19,109 +19,70 @@ Generated skills are designed around four stages:
 - **Check**: Validate results with explicit rules, diagnose issues, and recommend actions.
 - **Act**: Review outcomes, absorb user feedback, and decide whether a new Plan cycle is needed.
 
-## Key Features
+## Core Capabilities
 
-- Converts fuzzy business needs into executable skill designs.
-- Keeps the business core first, so generated skills implement the minimal real workflow before wrapping it in PDCA, reports, logs, and review structure.
-- Requires crawler-style skills to generate a real collection framework with URL handling, Playwright page access, basic DOM extraction, screenshots, error classification, and structured output.
-- Includes a required Plan / Do / Check / Act stage template for generated skills.
-- Requires every stage to define inputs, actions, outputs, exception handling, and evidence requirements.
-- Marks both target maturity and current maturity for generated skills, so workflow descriptions or placeholder scaffolds are not mistaken for deployable systems.
-- Generates executable scaffolds, checkers, and smoke-test entry points for automation, inspection, monitoring, reporting, and crawler-style skills.
-- Requires a capability matrix that clearly separates implemented, placeholder, and pending capabilities.
-- Requires Check scripts to consume rule files, reducing the risk that check rules live only in documentation.
-- Requires rule files, output schemas, Do-script outputs, Check-script fields, and deployment contracts to stay consistent.
-- Requires crawler-style skills to actually consume `references/selectors.yaml`, not merely generate the file.
-- Supports post-generation smoke tests for script syntax, sample execution paths, exit codes, and key artifacts.
-- Generates a Codex-installable plugin directory with `.codex-plugin/plugin.json` and `skills/` when the user asks for a plugin.
-- Supports structured logs, health diagnosis tables, and P0/P1/P2 priority levels.
-- Encourages script-first execution to reduce repeated reasoning and token usage.
-- Treats screenshots as archived evidence, not default visual-analysis context.
-- Reads only the latest runtime log by default to avoid context bloat.
-- Requires `references/plan-history.md` to preserve historical requirements and decisions.
-- Preserves creator source, version, and generation date so old skills can be upgraded later.
+### Business-First Skill Design
 
-## 0.2.6 Release Highlights: Two-Layer Generated Skill Scoring
+- Converts fuzzy business goals into concrete inputs, outputs, rules, and operating boundaries.
+- Identifies the business core first, then adds PDCA, reports, logs, baselines, and review structure around it.
+- For crawler and page-inspection work, requires a real collection path: URL handling, Playwright access, DOM extraction, screenshots, structured results, and error classification.
+- Uses selector configuration such as `references/selectors.yaml` when page selectors are unknown, and requires scripts to actually consume that configuration.
 
-Version `0.2.6` separates generic skill-quality scoring from business-specific use-case scoring. This keeps the Amazon ASIN creator test useful for creator regression while preventing Amazon-specific keywords from becoming the default standard for every generated skill.
+### PDCA Execution Scaffold
 
-- **Generic quality gate**: Adds `scripts/run_generated_skill_quality_gate.py`, a business-neutral checker for PDCA stages, maturity, capability matrices, business-core planning, scaffolds, contracts, evidence, self-optimization layers, and clean packaging.
-- **Generated skill self-check entry**: New generated skills should include `scripts/score_skill_quality.py` and `references/skill-quality-rubric.json` so they can be evaluated independently of the creator.
-- **Business-specific scoring entry**: New generated skills should include `scripts/run_business_use_case_test.py` and `references/business-use-case-profile.json`, created from the user's own business goal, core actions, inputs, outputs, rules, evidence, sample data, and acceptance thresholds.
-- **Clear scoring boundary**: The generic score validates the PDCA skill contract. The business score validates the chosen scenario. Neither should fake success when accounts, permissions, network access, selectors, or manual exports are still missing.
+- Generates business-specific Plan, Do, Check, and Act stages with inputs, actions, outputs, exception handling, evidence, and confirmation points.
+- Creates executable scaffolds for automation, monitoring, reporting, crawler, and recurring operations.
+- Uses script-first execution with `init_project.py`, `run_task.py`, `check_outputs.py`, `smoke_test.py`, and scheduled entry points when needed.
+- Keeps screenshots, logs, and structured files as evidence rather than relying on repeated AI-only reasoning.
 
-## 0.2.5 Release Highlights: Evidence-Ready Self-Optimization And Plugin-Aware Testing
+### Evidence-Based Maturity
 
-Version `0.2.5` makes the creator easier to promote, review, and accept as a team workflow tool. The release turns "self-improving" from a broad promise into a checkable evidence model, and it improves the use-case tester so both plain skill folders and Codex-installable plugin folders can be tested without confusion.
-
-- **Evidence-ready self-optimization matrix**: Generated skills must now spell out self-optimization mechanism, executable self-optimization, and proven self-evolution as separate layers with status, evidence, retest entry, and claim boundaries.
-- **Act retest evidence path**: Act outputs must name the retest entry and the evidence path. If no retest has been run, the generated skill must say "pending" or "not verified" instead of implying success.
-- **Plugin-aware use-case testing**: `scripts/run_creator_use_case_test.py` accepts either a skill directory or an installable plugin root with `.codex-plugin/plugin.json` and `skills/`, then reports the resolved candidate type.
-- **More robust bilingual scoring**: The tester recognizes English self-optimization and retest wording such as `self-optimization`, `self-evolution`, `retest`, and `re-test`.
-- **Clean release hygiene**: Local test candidates, generated reports, smoke outputs, `__pycache__`, and `work_smoke` artifacts are cleaned before release so future test runs do not mix with old evidence.
-
-## Maturity And Evidence-Based Capability Claims
-
-One of the core strengths of `pdca-skill-creator` is that it does not treat "has a workflow", "has scripts", or "has a scheduled entry point" as proof of deployability. Generated skills are expected to separate target maturity, current maturity, and evidence boundaries, so users can see which capabilities are implemented, which are scaffolds, and which still depend on accounts, permissions, selectors, APIs, or real runtime validation.
+- Separates target maturity from current maturity so scaffolds are not mistaken for production-ready systems.
+- Produces capability and business-core implementation matrices that mark each capability as implemented, placeholder, or pending.
+- Requires Check scripts to consume rule files and output schemas.
+- Keeps rule files, schemas, Do outputs, Check fields, and deployment contracts aligned.
 
 Generated skills use four maturity levels:
 
 | Level | Meaning | Typical Evidence |
 |---|---|---|
-| L1 Specification | The workflow, rules, and open questions are documented, but the skill must not claim to be runnable. | PDCA stages, business rules, open questions |
+| L1 Specification | Workflow, rules, and open questions are documented, but the skill must not claim to be runnable. | PDCA stages, business rules, open questions |
 | L2 Rules | Rules, deployment contracts, and output formats exist, but stable execution scripts are missing. | Check rules, output schema, deployment contract |
 | L3 Executable | Do/Check scripts, structured outputs, logs, and a local manual entry point exist. | `run_task.py`, `check_outputs.py`, smoke test, runtime logs |
 | L4 Deployable | L3 plus a real business execution path, scheduled entry point, failure handling, and deployment acceptance records. | Scheduler entry point, exit codes, log discovery, deployment parameters, acceptance record |
 
-Generated skills also include a capability matrix that explains:
+### Quality Gates And Scoring
 
-- Whether directory initialization, input validation, real business execution, structured output, and report delivery are implemented.
-- Whether Check rules are actually consumed by scripts instead of living only in documentation.
-- Whether screenshots, logs, diagnostics, baseline protection, and deployment entries are supported by evidence.
-- Whether self-optimization is only a mechanism, has been executed through Do/Check/Act, or has been proven through repeated retests.
+- Keeps `scripts/run_creator_use_case_test.py` for creator regression testing with the default Amazon ASIN use case.
+- Adds a generic generated-skill quality gate through `scripts/run_generated_skill_quality_gate.py`.
+- Requires newly generated skills to include `scripts/score_skill_quality.py` and `references/skill-quality-rubric.json` for business-neutral PDCA quality scoring.
+- Requires newly generated skills to include `scripts/run_business_use_case_test.py` and `references/business-use-case-profile.json` for scenario-specific scoring.
+- Uses a default passing line of 85/100 with no P0/P1 blockers.
 
-This makes generated skills easier to review, accept, and reuse across a team. The README-level promise is intentionally practical: show the automation potential, but keep every claim tied to evidence so placeholder scaffolds are not mistaken for production-ready systems.
+### Self-Optimization And Retesting
 
-## 0.2.4 Postmortem Adjustments: Use Case Tests And Self-Optimization Evidence
+- Separates self-optimization mechanism, executable self-optimization, and proven self-evolution.
+- Requires Act outputs to name retest entries and evidence paths.
+- Marks untested optimization claims as pending or not verified instead of implying success.
+- Preserves requirement history and decisions in `references/plan-history.md`.
 
-Observed failure: creator quality needed a more stable use-case testing loop, and "self-improving" could too easily become a broad claim without evidence boundaries. Version `0.2.4` adjusts the creator rules as follows:
+### Plugin Delivery And Clean Packaging
 
-- **Added creator use-case testing loop**: When the user asks for use-case testing, retesting, or creator self-optimization, the creator should complete candidate generation, scoring, reports, Act improvements, and iterative retests as needed, stopping once the passing standard is met.
-- **Added default Amazon ASIN inspection use case**: Covers project isolation, daily collection, baseline comparison, anomaly grading, dual-sheet reports, screenshot evidence, and anti-risk tolerance.
-- **Added deterministic test script**: `scripts/run_creator_use_case_test.py` can generate machine-readable scores, test reports, and Act improvement lists.
-- **Added layered self-optimization evaluation**: Separates "has a self-optimization mechanism", "self-optimization was executed", and "self-evolution was proven", with runtime or retest evidence required for stronger claims.
-- **Improved README-level capability messaging**: Presents maturity grading, capability matrices, and evidence chains as product strengths, making generated skills easier to review and accept.
+- Generates a Codex-installable plugin directory with `.codex-plugin/plugin.json` and `skills/` when plugin delivery is requested.
+- Treats zip files as optional transport archives, not as a replacement for installable plugin structure.
+- Excludes `__pycache__/`, `*.pyc`, `work_smoke/`, temporary logs, and local test outputs from final deliverables.
+- Supports testing either plain skill folders or installable plugin roots.
 
-## 0.2.3 Postmortem Adjustments: Installable Plugins And Contract Consistency
+## Version Summary
 
-Observed failure: a generated business skill could be an L3 scaffold but still have mismatched rule/output fields, selector files that were not actually consumed by scripts, smoke tests that tolerated unexpected failures, zip archives containing runtime caches, and plugin requests that only produced an archive instead of a Codex-installable plugin directory. Version `0.2.3` adjusts the creator rules as follows:
-
-- **Adjusted plugin delivery format**: When the user asks for a plugin, Codex-installable output, or direct installation, the creator must generate a plugin directory with `.codex-plugin/plugin.json` and `skills/`; zip files are only optional transport archives.
-- **Adjusted output contract checks**: `check-rules.yaml.required_outputs`, `output-schema.json`, Do-script `outputs`, Check-script fields, and deployment contracts must agree.
-- **Adjusted selector consumption requirements**: If `references/selectors.yaml` is generated, the collection script must read and use it.
-- **Adjusted smoke-test failure classification**: Empty dry-run business fields can be expected, but field-name mismatches, unread rule files, schema mismatches, and missing artifact paths are unexpected failures.
-- **Adjusted clean packaging rules**: Final skill packages and plugin directories must exclude `__pycache__/`, `*.pyc`, `work_smoke/`, temporary logs, and local self-check outputs.
-
-## 0.2.2 Postmortem Adjustments: Business Core First
-
-Observed failure: a generated skill could have a complete PDCA shell while the real business action, such as crawling Amazon pages, remained a placeholder. Version `0.2.2` adjusts the creator rules as follows:
-
-- **Adjusted business-core-first generation**: The creator must identify the core business action first and implement the minimal real loop before adding PDCA wrappers, reports, logs, baselines, and review structure.
-- **Adjusted crawler generation gate**: Web crawling and page inspection skills must generate a real collection framework with URL construction or loading, Playwright page access, timeout handling, basic DOM extraction, screenshots, structured output, and error classification.
-- **Adjusted selector handling**: Unknown page selectors should become `references/selectors.yaml` or an equivalent configuration file, not a reason to skip page access entirely.
-- **Adjusted field extraction requirements**: User-requested fields must be mapped to extraction strategies, selectors or fallbacks, evidence paths, and open questions.
-- **Adjusted maturity downgrade**: If no real collection framework is generated, current maturity is capped at L2. If the framework exists but selectors are still pending, current maturity is capped at an executable L3 scaffold.
-- **Adjusted delivery order**: If the business core remains a placeholder, the final delivery must surface that gap before describing the PDCA shell.
-
-## 0.2.1 Postmortem Adjustments: Post-Generation Test And Check Loop
-
-Observed failure: generated skills were too easily judged by whether scripts existed, not by whether those scripts actually supported the claimed maturity level. Version `0.2.1` adjusted the creator rules as follows:
-
-- **Adjusted maturity grading**: Separates target maturity from current maturity. If core business logic is still `stub`, `TODO`, `not_configured`, `dry-run only`, or placeholder output, the skill must not claim L4 deployability.
-- **Adjusted capability boundary reporting**: Requires generated skills to report status for directory initialization, input validation, real business execution, structured output, report delivery, Check execution, evidence/logging, and deployment entry points.
-- **Adjusted checker generation**: Requires L3/L4 Check scripts to read `references/check-rules.yaml`, `references/output-schema.json`, or equivalent rule files instead of leaving rules only in documentation.
-- **Adjusted post-generation testing**: Requires generating or running `scripts/smoke_test.py` to validate syntax, minimal sample flows, exit codes, and key artifacts.
-- **Adjusted downgrade explanations**: If accounts, permissions, browser access, network, selectors, API keys, or external data are missing, the skill must explain why self-checking was not completed and downgrade current maturity to the level supported by evidence.
+| Version | Main change |
+|---|---|
+| 0.2.6 | Split generic PDCA quality scoring from business-specific use-case scoring. |
+| 0.2.5 | Added explicit self-optimization layers, retest evidence paths, plugin-aware testing, and clean release hygiene. |
+| 0.2.4 | Added creator use-case testing loop, default Amazon ASIN regression case, and deterministic test reports. |
+| 0.2.3 | Strengthened installable plugin delivery, contract consistency, selector consumption, smoke tests, and packaging cleanup. |
+| 0.2.2 | Put the business core first and required real crawler/page-inspection scaffolds. |
+| 0.2.1 | Added maturity grading, capability boundaries, rule-consuming checkers, and post-generation self-checks. |
 
 ## Use Cases
 
