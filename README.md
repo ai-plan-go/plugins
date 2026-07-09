@@ -41,6 +41,38 @@ Generated skills are designed around four stages:
 - Requires `references/plan-history.md` to preserve historical requirements and decisions.
 - Preserves creator source, version, and generation date so old skills can be upgraded later.
 
+## Maturity And Evidence-Based Capability Claims
+
+One of the core strengths of `pdca-skill-creator` is that it does not treat "has a workflow", "has scripts", or "has a scheduled entry point" as proof of deployability. Generated skills are expected to separate target maturity, current maturity, and evidence boundaries, so users can see which capabilities are implemented, which are scaffolds, and which still depend on accounts, permissions, selectors, APIs, or real runtime validation.
+
+Generated skills use four maturity levels:
+
+| Level | Meaning | Typical Evidence |
+|---|---|---|
+| L1 Specification | The workflow, rules, and open questions are documented, but the skill must not claim to be runnable. | PDCA stages, business rules, open questions |
+| L2 Rules | Rules, deployment contracts, and output formats exist, but stable execution scripts are missing. | Check rules, output schema, deployment contract |
+| L3 Executable | Do/Check scripts, structured outputs, logs, and a local manual entry point exist. | `run_task.py`, `check_outputs.py`, smoke test, runtime logs |
+| L4 Deployable | L3 plus a real business execution path, scheduled entry point, failure handling, and deployment acceptance records. | Scheduler entry point, exit codes, log discovery, deployment parameters, acceptance record |
+
+Generated skills also include a capability matrix that explains:
+
+- Whether directory initialization, input validation, real business execution, structured output, and report delivery are implemented.
+- Whether Check rules are actually consumed by scripts instead of living only in documentation.
+- Whether screenshots, logs, diagnostics, baseline protection, and deployment entries are supported by evidence.
+- Whether self-optimization is only a mechanism, has been executed through Do/Check/Act, or has been proven through repeated retests.
+
+This makes generated skills easier to review, accept, and reuse across a team. The README-level promise is intentionally practical: show the automation potential, but keep every claim tied to evidence so placeholder scaffolds are not mistaken for production-ready systems.
+
+## 0.2.4 Postmortem Adjustments: Use Case Tests And Self-Optimization Evidence
+
+Observed failure: creator quality needed a more stable use-case testing loop, and "self-improving" could too easily become a broad claim without evidence boundaries. Version `0.2.4` adjusts the creator rules as follows:
+
+- **Added creator use-case testing loop**: When the user asks for use-case testing, retesting, or creator self-optimization, the creator should complete candidate generation, scoring, reports, Act improvements, and iterative retests as needed, stopping once the passing standard is met.
+- **Added default Amazon ASIN inspection use case**: Covers project isolation, daily collection, baseline comparison, anomaly grading, dual-sheet reports, screenshot evidence, and anti-risk tolerance.
+- **Added deterministic test script**: `scripts/run_creator_use_case_test.py` can generate machine-readable scores, test reports, and Act improvement lists.
+- **Added layered self-optimization evaluation**: Separates "has a self-optimization mechanism", "self-optimization was executed", and "self-evolution was proven", with runtime or retest evidence required for stronger claims.
+- **Improved README-level capability messaging**: Presents maturity grading, capability matrices, and evidence chains as product strengths, making generated skills easier to review and accept.
+
 ## 0.2.3 Postmortem Adjustments: Installable Plugins And Contract Consistency
 
 Observed failure: a generated business skill could be an L3 scaffold but still have mismatched rule/output fields, selector files that were not actually consumed by scripts, smoke tests that tolerated unexpected failures, zip archives containing runtime caches, and plugin requests that only produced an archive instead of a Codex-installable plugin directory. Version `0.2.3` adjusts the creator rules as follows:
@@ -121,7 +153,7 @@ The simplest way is to add this repository as a Codex plugin marketplace.
 - Marketplace: `ai-plan-go`
 - Published repository: <https://github.com/ai-plan-go/plugins>
 - Git URL: `https://github.com/ai-plan-go/plugins.git`
-- Current version: `0.2.3`
+- Current version: `0.2.4`
 
 Future sessions should use this section, `marketplace.json`, and `plugins/pdca-skill-creator/.codex-plugin/plugin.json` to quickly identify the published plugin.
 
@@ -204,7 +236,7 @@ The goal is not to make AI think harder every time. The goal is to make repeatab
 
 ## Version
 
-Current creator version: `0.2.3`
+Current creator version: `0.2.4`
 
 Source repository: <https://github.com/ai-plan-go/plugins.git>
 

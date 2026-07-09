@@ -1,7 +1,7 @@
 {
   "name": "pdca-skill-creator",
-  "version": "0.2.3",
-  "description": "Create PDCA-based Codex skills and installable plugin directories with business-core-first execution, crawler scaffolds, selector consumption, contract-consistent checks, smoke tests, clean packaging, evidence, logs, and iterative improvement.",
+  "version": "0.2.4",
+  "description": "Create PDCA-based Codex skills and run iterative creator use case tests with business-core-first execution, evidence-backed maturity grading, capability matrices, self-optimization evaluation, crawler scaffolds, selector consumption, contract-consistent checks, smoke tests, clean packaging, logs, and reports.",
   "author": {
     "name": "ai-plan-go",
     "url": "https://github.com/ai-plan-go"
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "PDCA Skill Creator",
     "shortDescription": "Create self-checking PDCA Codex skills",
-    "longDescription": "Create Codex skills that follow a PDCA loop with Plan, Do, Check, and Act stages while preserving the business core first. It generates core implementation plans, crawler scaffolds for page inspection tasks, selector and field extraction matrices, conservative maturity grading, capability matrices, executable scaffolds, contract-consistent rule-driven checks, smoke tests, clean installable plugin directories when requested, evidence, logs, health diagnosis, historical requirements, and iterative improvement.",
+    "longDescription": "Create Codex skills that follow a PDCA loop with Plan, Do, Check, and Act stages while preserving the business core first. It generates core implementation plans, crawler scaffolds for page inspection tasks, selector and field extraction matrices, evidence-backed maturity grading, capability matrices, layered self-optimization evaluation, executable scaffolds, contract-consistent rule-driven checks, smoke tests, clean installable plugin directories when requested, evidence, logs, health diagnosis, historical requirements, and iterative creator use case test reports.",
     "developerName": "ai-plan-go",
     "category": "Productivity",
     "capabilities": [
@@ -31,7 +31,8 @@
     "defaultPrompt": [
       "Use $pdca-skill-creator to create a skill for a recurring workflow.",
       "Use $pdca-skill-creator to upgrade an existing workflow skill.",
-      "Use $pdca-skill-creator to design a self-checking inspection skill."
+      "Use $pdca-skill-creator to design a self-checking inspection skill.",
+      "Use $pdca-skill-creator to run iterative creator use case tests and improve the creator rules."
     ],
     "brandColor": "#0F766E",
     "logo": "./assets/logo.svg"

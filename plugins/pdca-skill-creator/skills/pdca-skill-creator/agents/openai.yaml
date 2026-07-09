@@ -1,4 +1,4 @@
 interface:
   display_name: "PDCA Skill Creator"
-  short_description: "创建具备自检闭环的 Codex 技能"
-  default_prompt: "Use $pdca-skill-creator to turn my recurring workflow into a self-checking PDCA Codex skill."
+  short_description: "创建具备自检闭环的 Codex 技能，并支持创建器用例测试"
+  default_prompt: "Use $pdca-skill-creator to turn my recurring workflow into a self-checking PDCA Codex skill, and run iterative creator use case tests when I provide a test case."
