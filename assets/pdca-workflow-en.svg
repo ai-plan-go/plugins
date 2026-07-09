@@ -83,9 +83,9 @@
   </g>
 
   <g font-family="Inter, Segoe UI, Arial, sans-serif" filter="url(#shadow)">
-    <rect x="368" y="758" width="544" height="86" rx="18" fill="#0F172A"/>
-    <text x="396" y="792" fill="#A7F3D0" font-size="18" font-weight="800">Runtime cost controls</text>
-    <text x="396" y="822" fill="#E2E8F0" font-size="17">Execute scripts · Archive screenshots · Read latest log · Load history only when needed</text>
+    <rect x="330" y="758" width="620" height="86" rx="18" fill="#0F172A"/>
+    <text x="358" y="792" fill="#A7F3D0" font-size="18" font-weight="800">Runtime cost controls</text>
+    <text x="358" y="822" fill="#E2E8F0" font-size="17">Run scripts · Archive evidence · Read latest log · Load history on demand</text>
   </g>
 
   <g font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15">

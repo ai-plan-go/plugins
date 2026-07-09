@@ -99,7 +99,7 @@ Use this skill when you want to create or upgrade a Codex skill for:
 
 ## Workflow
 
-![PDCA workflow](assets/pdca-workflow-en.svg)
+![PDCA workflow](assets/pdca-workflow-en.png)
 
 ## Who It Is For
 

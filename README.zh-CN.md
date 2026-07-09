@@ -98,7 +98,7 @@
 
 ## 工作流
 
-![PDCA 工作流](assets/pdca-workflow-zh.svg)
+![PDCA 工作流](assets/pdca-workflow-zh.png)
 
 ## 适合谁使用
 
