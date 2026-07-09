@@ -41,6 +41,16 @@ Generated skills are designed around four stages:
 - Requires `references/plan-history.md` to preserve historical requirements and decisions.
 - Preserves creator source, version, and generation date so old skills can be upgraded later.
 
+## 0.2.5 Release Highlights: Evidence-Ready Self-Optimization And Plugin-Aware Testing
+
+Version `0.2.5` makes the creator easier to promote, review, and accept as a team workflow tool. The release turns "self-improving" from a broad promise into a checkable evidence model, and it improves the use-case tester so both plain skill folders and Codex-installable plugin folders can be tested without confusion.
+
+- **Evidence-ready self-optimization matrix**: Generated skills must now spell out self-optimization mechanism, executable self-optimization, and proven self-evolution as separate layers with status, evidence, retest entry, and claim boundaries.
+- **Act retest evidence path**: Act outputs must name the retest entry and the evidence path. If no retest has been run, the generated skill must say "pending" or "not verified" instead of implying success.
+- **Plugin-aware use-case testing**: `scripts/run_creator_use_case_test.py` accepts either a skill directory or an installable plugin root with `.codex-plugin/plugin.json` and `skills/`, then reports the resolved candidate type.
+- **More robust bilingual scoring**: The tester recognizes English self-optimization and retest wording such as `self-optimization`, `self-evolution`, `retest`, and `re-test`.
+- **Clean release hygiene**: Local test candidates, generated reports, smoke outputs, `__pycache__`, and `work_smoke` artifacts are cleaned before release so future test runs do not mix with old evidence.
+
 ## Maturity And Evidence-Based Capability Claims
 
 One of the core strengths of `pdca-skill-creator` is that it does not treat "has a workflow", "has scripts", or "has a scheduled entry point" as proof of deployability. Generated skills are expected to separate target maturity, current maturity, and evidence boundaries, so users can see which capabilities are implemented, which are scaffolds, and which still depend on accounts, permissions, selectors, APIs, or real runtime validation.
@@ -153,7 +163,7 @@ The simplest way is to add this repository as a Codex plugin marketplace.
 - Marketplace: `ai-plan-go`
 - Published repository: <https://github.com/ai-plan-go/plugins>
 - Git URL: `https://github.com/ai-plan-go/plugins.git`
-- Current version: `0.2.4`
+- Current version: `0.2.5`
 
 Future sessions should use this section, `marketplace.json`, and `plugins/pdca-skill-creator/.codex-plugin/plugin.json` to quickly identify the published plugin.
 
@@ -236,7 +246,7 @@ The goal is not to make AI think harder every time. The goal is to make repeatab
 
 ## Version
 
-Current creator version: `0.2.4`
+Current creator version: `0.2.5`
 
 Source repository: <https://github.com/ai-plan-go/plugins.git>
 

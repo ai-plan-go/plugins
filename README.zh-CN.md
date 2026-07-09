@@ -41,6 +41,16 @@
 - 要求维护 `references/plan-history.md`，避免 Act 复盘优化时丢失历史需求。
 - 要求生成的技能保留来源、版本和升级说明，方便后续用新版创建器迁移。
 
+## 0.2.5 发版亮点：可举证自我优化与插件形态测试
+
+`0.2.5` 让创建器更适合作为团队工作流工具来宣发、评审和验收。本版本把“自我优化进化”从泛泛承诺变成可检查的证据模型，同时让用例测试脚本能够同时识别普通技能目录和 Codex 可安装插件目录。
+
+- **自我优化能力分层矩阵**：生成技能必须区分“自我优化机制”“自我优化可执行”“自我进化有效性”，并分别写明状态、证据、复测入口和不得宣称的边界。
+- **Act 复测证据路径**：Act 产物必须写出复测入口和复测证据路径；没有运行复测时，必须标为“待确认”或“未验证”，不能暗示已经成功。
+- **插件形态用例测试**：`scripts/run_creator_use_case_test.py` 支持传入普通技能目录，也支持传入含 `.codex-plugin/plugin.json` 和 `skills/` 的可安装插件根目录，并在报告中标明识别出的候选类型。
+- **中英文评分更稳**：测试脚本识别 `self-optimization`、`self-evolution`、`retest`、`re-test` 等英文表达，减少合理英文生成物被误判。
+- **清洁发版规则**：发版前清理本地候选技能、测试报告、smoke 输出、`__pycache__` 和 `work_smoke`，避免后续测试混入旧证据。
+
 ## 成熟度与证据化能力声明
 
 `pdca-skill-creator` 的一个核心特点，是不把“写了流程”“有脚本”“能定时”直接包装成可部署能力。生成的技能会区分目标成熟度、当前成熟度和证据边界，让使用者清楚知道哪些能力已经实现，哪些只是脚手架，哪些还需要账号、权限、选择器、接口或真实运行来确认。
@@ -152,7 +162,7 @@ pdca-skill-creator/
 - 插件市场：`ai-plan-go`
 - 发布仓库：<https://github.com/ai-plan-go/plugins>
 - Git 地址：`https://github.com/ai-plan-go/plugins.git`
-- 当前版本：`0.2.4`
+- 当前版本：`0.2.5`
 
 后续其他会话需要识别本插件时，优先查看本节、`marketplace.json` 和 `plugins/pdca-skill-creator/.codex-plugin/plugin.json`。
 
@@ -235,7 +245,7 @@ cp -R plugins/pdca-skill-creator/skills/pdca-skill-creator ~/.codex/skills/
 
 ## 版本
 
-当前创建器版本：`0.2.4`
+当前创建器版本：`0.2.5`
 
 来源仓库：<https://github.com/ai-plan-go/plugins.git>
 

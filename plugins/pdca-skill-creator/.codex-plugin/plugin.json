@@ -1,7 +1,7 @@
 {
   "name": "pdca-skill-creator",
-  "version": "0.2.4",
-  "description": "Create PDCA-based Codex skills and run iterative creator use case tests with business-core-first execution, evidence-backed maturity grading, capability matrices, self-optimization evaluation, crawler scaffolds, selector consumption, contract-consistent checks, smoke tests, clean packaging, logs, and reports.",
+  "version": "0.2.5",
+  "description": "Create PDCA-based Codex skills and run iterative creator use case tests with business-core-first execution, evidence-backed maturity grading, self-optimization matrices, plugin-aware testing, crawler scaffolds, selector consumption, contract-consistent checks, smoke tests, clean packaging, logs, and reports.",
   "author": {
     "name": "ai-plan-go",
     "url": "https://github.com/ai-plan-go"
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "PDCA Skill Creator",
     "shortDescription": "Create self-checking PDCA Codex skills",
-    "longDescription": "Create Codex skills that follow a PDCA loop with Plan, Do, Check, and Act stages while preserving the business core first. It generates core implementation plans, crawler scaffolds for page inspection tasks, selector and field extraction matrices, evidence-backed maturity grading, capability matrices, layered self-optimization evaluation, executable scaffolds, contract-consistent rule-driven checks, smoke tests, clean installable plugin directories when requested, evidence, logs, health diagnosis, historical requirements, and iterative creator use case test reports.",
+    "longDescription": "Create Codex skills that follow a PDCA loop with Plan, Do, Check, and Act stages while preserving the business core first. It generates core implementation plans, crawler scaffolds for page inspection tasks, selector and field extraction matrices, evidence-backed maturity grading, capability matrices, layered self-optimization evaluation with retest evidence paths, executable scaffolds, contract-consistent rule-driven checks, plugin-aware use case tests, smoke tests, clean installable plugin directories when requested, evidence, logs, health diagnosis, historical requirements, and iterative creator use case test reports.",
     "developerName": "ai-plan-go",
     "category": "Productivity",
     "capabilities": [

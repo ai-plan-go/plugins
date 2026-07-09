@@ -23,7 +23,7 @@ RUBRIC = [
     ("contract_consistency", 10, ["check-rules", "output-schema", "required_outputs", "outputs", "deployment-contract"]),
     ("maturity", 8, ["目标成熟度", "当前成熟度", "L3", "L4", "占位", "待确认"]),
     ("executable_scaffold", 10, ["init_project.py", "run_task.py", "check_outputs.py", "smoke_test.py", "run_daily_check.ps1", "退出码"]),
-    ("self_check_act", 10, ["smoke test", "自检", "Act", "plan-history", "复盘", "改进", "自我优化|自我进化|优化机制", "复测|re-run"]),
+    ("self_check_act", 10, ["smoke test", "自检", "Act", "plan-history", "复盘", "改进", "自我优化|自我进化|优化机制|self-optimization|self optimization|self-evolution|self evolution", "复测|re-run|retest|re-test"]),
 ]
 
 
@@ -82,6 +82,26 @@ def contains_any_file(skill_dir: Path, names: list[str]) -> bool:
     return any((skill_dir / name).exists() for name in names)
 
 
+def resolve_skill_dir(candidate_dir: Path) -> tuple[Path, str]:
+    """Accept either a skill directory or an installable plugin root."""
+    if (candidate_dir / "SKILL.md").exists():
+        return candidate_dir, "skill"
+
+    plugin_manifest = candidate_dir / ".codex-plugin" / "plugin.json"
+    skills_root = candidate_dir / "skills"
+    if plugin_manifest.exists() and skills_root.exists():
+        skill_dirs = sorted(path.parent for path in skills_root.glob("*/SKILL.md"))
+        if len(skill_dirs) == 1:
+            return skill_dirs[0], "plugin"
+        if len(skill_dirs) > 1:
+            named_dir = skills_root / candidate_dir.name
+            if (named_dir / "SKILL.md").exists():
+                return named_dir, "plugin"
+            return skill_dirs[0], "plugin"
+
+    return candidate_dir, "unknown"
+
+
 def keyword_score(text: str, keywords: list[str], points: int) -> tuple[int, list[str]]:
     lowered = text.lower()
     hits = []
@@ -133,7 +153,7 @@ def has_self_optimization_mechanism(text: str) -> bool:
     return bool(
         re.search(r"Act", text, re.I)
         and re.search(r"plan-history|复盘|改进", text, re.I)
-        and re.search(r"自我优化|自我进化|优化机制|复测|re-run", text, re.I)
+        and re.search(r"自我优化|自我进化|优化机制|self[- ]?optimization|self[- ]?evolution|复测|re-run|retest|re-test", text, re.I)
     )
 
 
@@ -144,6 +164,8 @@ def overclaims_self_evolution(text: str) -> bool:
 
 
 def run_use_case_test(skill_dir: Path) -> dict:
+    requested_dir = skill_dir
+    skill_dir, candidate_type = resolve_skill_dir(skill_dir)
     text = all_text(skill_dir)
     issues: list[dict] = []
     dimension_scores: dict[str, dict] = {}
@@ -207,7 +229,9 @@ def run_use_case_test(skill_dir: Path) -> dict:
 
     return {
         "tested_at": datetime.now().isoformat(timespec="seconds"),
+        "requested_dir": str(requested_dir),
         "skill_dir": str(skill_dir),
+        "candidate_type": candidate_type,
         "score": total,
         "max_score": 100,
         "passed": passed,
@@ -231,7 +255,9 @@ def write_report(result: dict, out_dir: Path) -> None:
         "# PDCA Skill Creator Use Case Test Report",
         "",
         f"- Tested at: {result['tested_at']}",
+        f"- Requested candidate: `{result.get('requested_dir', result['skill_dir'])}`",
         f"- Candidate: `{result['skill_dir']}`",
+        f"- Candidate type: {result.get('candidate_type', 'unknown')}",
         f"- Score: {result['score']}/{result['max_score']}",
         f"- Passed: {result['passed']}",
         "",
