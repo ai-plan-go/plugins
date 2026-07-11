@@ -36,7 +36,41 @@ REQUIRED_FILES = [
     "scripts/smoke_test.py",
     "scripts/run_daily_check.ps1",
     "references/deployment-contract.md",
+    "references/do-run-plan.md",
     "references/plan-history.md",
+]
+
+REQUIRED_CONFIRMATION_KEYWORDS = [
+    "步骤检查确认表",
+    "步骤",
+    "参数类别",
+    "数据来源",
+    "输出格式",
+    "触发方案",
+    "运行参数",
+    "确认状态",
+    "未确认风险",
+    "处理动作",
+]
+
+CODEX_AUTOMATION_KEYWORDS = [
+    "Codex 已安排任务",
+    "Codex automation",
+    "automation",
+    "未安排",
+    "已安排",
+]
+
+DO_RUN_PLAN_KEYWORDS = [
+    "运行入口",
+    "参数表",
+    "前置检查",
+    "执行流程",
+    "产物清单",
+    "可观测",
+    "异常诊断",
+    "Check",
+    "用户确认",
 ]
 
 
@@ -189,6 +223,13 @@ def run_use_case_test(skill_dir: Path) -> dict:
     if not contains_any_file(skill_dir, ["references/selectors.yaml", "references/selectors.yml"]):
         issues.append({"priority": "P1", "type": "missing_selectors", "detail": "references/selectors.yaml"})
 
+    if candidate_type != "plugin":
+        issues.append({
+            "priority": "P1",
+            "type": "not_installable_codex_plugin",
+            "detail": "candidate is a bare skill directory; installable Codex deliverables need .codex-plugin/plugin.json and skills/{name}/SKILL.md",
+        })
+
     for name, points, keywords in RUBRIC:
         score, missing = keyword_score(text, keywords, points)
         dimension_scores[name] = {
@@ -201,6 +242,9 @@ def run_use_case_test(skill_dir: Path) -> dict:
     run_task = read_text(skill_dir / "scripts" / "run_task.py")
     check_outputs = read_text(skill_dir / "scripts" / "check_outputs.py")
     smoke_test = read_text(skill_dir / "scripts" / "smoke_test.py")
+    deployment_contract = read_text(skill_dir / "references" / "deployment-contract.md")
+    do_run_plan = read_text(skill_dir / "references" / "do-run-plan.md")
+    skill_md = read_text(skill_dir / "SKILL.md")
 
     if run_task and not re.search(r"playwright|async_playwright|sync_playwright", run_task, re.I):
         issues.append({"priority": "P0", "type": "crawler_framework_missing", "detail": "run_task.py does not reference Playwright"})
@@ -215,6 +259,46 @@ def run_use_case_test(skill_dir: Path) -> dict:
             issues.append({"priority": "P1", "type": "schema_not_consumed", "detail": "check_outputs.py does not read output-schema"})
     if smoke_test and not re.search(r"check_outputs|run_task|init_project", smoke_test, re.I):
         issues.append({"priority": "P1", "type": "weak_smoke_test", "detail": "smoke_test.py does not exercise init/run/check chain"})
+    if smoke_test and re.search(r"parents\s*\[\s*1\s*\]|parent\.parent|references.+plan-history|plan-history.+open\s*\(", smoke_test, re.I):
+        issues.append({
+            "priority": "P1",
+            "type": "smoke_writes_skill_source",
+            "detail": "smoke_test.py appears to write references/plan-history.md under the skill source; runtime evidence should go to the work/output directory or fail gracefully on read-only installs",
+        })
+    if run_task:
+        if not do_run_plan:
+            issues.append({
+                "priority": "P1",
+                "type": "missing_do_run_plan",
+                "detail": "references/do-run-plan.md is required to explain the Do script flow, parameters, outputs, logs, and failures",
+            })
+        else:
+            missing_do_plan = [keyword for keyword in DO_RUN_PLAN_KEYWORDS if keyword.lower() not in do_run_plan.lower()]
+            if missing_do_plan:
+                issues.append({
+                    "priority": "P1",
+                    "type": "incomplete_do_run_plan",
+                    "detail": "missing do-run-plan sections: " + ", ".join(missing_do_plan),
+                })
+
+    confirmation_missing = [
+        keyword for keyword in REQUIRED_CONFIRMATION_KEYWORDS
+        if keyword not in deployment_contract and keyword not in skill_md
+    ]
+    if confirmation_missing:
+        issues.append({
+            "priority": "P1",
+            "type": "missing_preflight_confirmation_contract",
+            "detail": "missing confirmation fields: " + ", ".join(confirmation_missing),
+        })
+
+    automation_context = re.search(r"每日|定时|自动|安排任务|监控|周期", text, re.I)
+    if automation_context and not any(keyword.lower() in text.lower() for keyword in CODEX_AUTOMATION_KEYWORDS):
+        issues.append({
+            "priority": "P1",
+            "type": "codex_automation_not_classified",
+            "detail": "scheduled/automated use case does not distinguish Codex arranged task from local scheduler script",
+        })
 
     if current_maturity_overclaims_l4(text):
         issues.append({"priority": "P1", "type": "possible_maturity_overclaim", "detail": "L4 appears together with placeholder markers"})
