@@ -31,8 +31,10 @@ Generated skills are designed around four stages:
 ### PDCA Execution Scaffold
 
 - Generates business-specific Plan, Do, Check, and Act stages with inputs, actions, outputs, exception handling, evidence, and confirmation points.
+- Requires a step-by-step confirmation table before creating automation, crawler, inspection, report, or scheduled skills.
 - Creates executable scaffolds for automation, monitoring, reporting, crawler, and recurring operations.
 - Uses script-first execution with `init_project.py`, `run_task.py`, `check_outputs.py`, `smoke_test.py`, and scheduled entry points when needed.
+- Requires `references/do-run-plan.md` for L3/L4 executable skills so the Do script flow is understandable without reading source code.
 - Keeps screenshots, logs, and structured files as evidence rather than relying on repeated AI-only reasoning.
 
 ### Evidence-Based Maturity
@@ -77,6 +79,10 @@ Generated skills use four maturity levels:
 
 | Version | Main change |
 |---|---|
+| 0.2.10 | Clarified README roles, repository structure, and version synchronization rules to prevent documentation drift. |
+| 0.2.9 | Added required Do-script run plan docs so generated runtime scripts are not black boxes. |
+| 0.2.8 | Added step-by-step confirmation table gates for parameters, status, risks, and handling actions. |
+| 0.2.7 | Added automation preflight confirmation, Codex scheduling classification, installable-plugin gates, and source-safe smoke-test checks. |
 | 0.2.6 | Split generic PDCA quality scoring from business-specific use-case scoring. |
 | 0.2.5 | Added explicit self-optimization layers, retest evidence paths, plugin-aware testing, and clean release hygiene. |
 | 0.2.4 | Added creator use-case testing loop, default Amazon ASIN regression case, and deterministic test reports. |
@@ -133,7 +139,7 @@ The simplest way is to add this repository as a Codex plugin marketplace.
 - Marketplace: `ai-plan-go`
 - Published repository: <https://github.com/ai-plan-go/plugins>
 - Git URL: `https://github.com/ai-plan-go/plugins.git`
-- Current version: `0.2.6`
+- Current version: `0.2.10`
 
 Future sessions should use this section, `marketplace.json`, and `plugins/pdca-skill-creator/.codex-plugin/plugin.json` to quickly identify the published plugin.
 
@@ -185,6 +191,7 @@ The creator will help confirm:
 
 - The business goal.
 - Required input data.
+- Data source, output format, trigger plan, runtime parameters, and delivery form.
 - Who consumes the output.
 - Success and failure criteria.
 - Exceptions that must be diagnosed.
@@ -198,6 +205,8 @@ Skills created with `pdca-skill-creator` are designed to include:
 - A clear PDCA operating model.
 - Explicit inputs, actions, outputs, exception handling, and evidence requirements.
 - Script-first execution for repeatable tasks.
+- A step-by-step confirmation table for automation-style skills.
+- A `references/do-run-plan.md` document for executable Do scripts.
 - Structured logs and check results.
 - Health diagnosis with P0/P1/P2 priority levels.
 - Token-control rules for scripts, screenshots, and historical logs.
@@ -216,7 +225,7 @@ The goal is not to make AI think harder every time. The goal is to make repeatab
 
 ## Version
 
-Current creator version: `0.2.6`
+Current creator version: `0.2.10`
 
 Source repository: <https://github.com/ai-plan-go/plugins.git>
 

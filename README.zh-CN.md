@@ -31,8 +31,10 @@
 ### PDCA 可执行脚手架
 
 - 生成业务化 Plan、Do、Check、Act 阶段，包含输入、动作、产物、异常处理、证据和确认点。
+- 创建自动化、爬虫、巡检、报表或定时技能前，必须生成步骤检查确认表，逐项确认参数、状态、风险和处理动作。
 - 为自动化、巡检、监控、报表、爬虫和周期性运营动作生成最小可执行脚手架。
 - 标准脚本包括 `init_project.py`、`run_task.py`、`check_outputs.py`、`smoke_test.py`，以及按需定时入口。
+- 对 L3/L4 可执行技能，必须生成 `references/do-run-plan.md`，让用户无需阅读源码也能理解 Do 脚本流程。
 - 鼓励脚本优先，减少重复口头推断和上下文消耗。
 
 ### 成熟度与证据化声明
@@ -77,6 +79,10 @@
 
 | 版本 | 主要变化 |
 |---|---|
+| 0.2.10 | 明确 README 分工、项目结构说明和版本同步规则，避免市场页、插件包说明和技能规则漂移。 |
+| 0.2.9 | 新增 Do 脚本流程计划文档要求，避免生成插件的运行脚本成为黑盒。 |
+| 0.2.8 | 新增步骤检查确认表门禁，要求逐项确认参数、状态、风险和处理动作后再生成自动化技能。 |
+| 0.2.7 | 强化自动化任务生成前确认、Codex 安排任务识别、可安装插件门禁和 smoke 写入边界检查。 |
 | 0.2.6 | 拆分通用规范评分和业务用例评分，新增生成技能双层质量门禁。 |
 | 0.2.5 | 强化自我优化能力分层、复测证据路径、插件形态测试识别和清洁发布。 |
 | 0.2.4 | 新增创建器用例测试闭环、默认亚马逊 ASIN 回归用例和确定性测试脚本。 |
@@ -132,7 +138,7 @@ pdca-skill-creator/
 - 插件市场：`ai-plan-go`
 - 发布仓库：<https://github.com/ai-plan-go/plugins>
 - Git 地址：`https://github.com/ai-plan-go/plugins.git`
-- 当前版本：`0.2.6`
+- 当前版本：`0.2.10`
 
 后续其他会话需要识别本插件时，优先查看本节、`marketplace.json` 和 `plugins/pdca-skill-creator/.codex-plugin/plugin.json`。
 
@@ -184,6 +190,7 @@ cp -R plugins/pdca-skill-creator/skills/pdca-skill-creator ~/.codex/skills/
 
 - 业务目标是什么。
 - 输入数据来自哪里。
+- 数据来源、输出格式、触发方案、运行参数和交付形态是什么。
 - 输出给谁使用。
 - 如何判断成功或失败。
 - 哪些异常需要诊断。
@@ -197,6 +204,8 @@ cp -R plugins/pdca-skill-creator/skills/pdca-skill-creator ~/.codex/skills/
 - 清晰的 PDCA 运行模型。
 - 明确的输入、动作、产物、异常处理和证据要求。
 - 面向重复任务的脚本优先执行方式。
+- 面向自动化任务的步骤检查确认表。
+- 面向可执行 Do 脚本的 `references/do-run-plan.md` 流程计划文档。
 - 结构化日志和检查结果。
 - 带 P0/P1/P2 优先级的健康诊断。
 - 针对脚本、截图和历史日志的 token 控制规则。
@@ -215,7 +224,7 @@ cp -R plugins/pdca-skill-creator/skills/pdca-skill-creator ~/.codex/skills/
 
 ## 版本
 
-当前创建器版本：`0.2.6`
+当前创建器版本：`0.2.10`
 
 来源仓库：<https://github.com/ai-plan-go/plugins.git>
 
