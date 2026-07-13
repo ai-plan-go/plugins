@@ -1,6 +1,6 @@
 {
   "name": "pdca-skill-creator",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "Create PDCA-based Codex skills with Do-script run plan docs, step-by-step parameter confirmation tables, preflight automation confirmation, Codex scheduling classification, installable-plugin gates, source-safe smoke tests, two-layer generated-skill scoring, business-core-first execution, evidence-backed maturity grading, self-optimization matrices, crawler scaffolds, contract-consistent checks, clean packaging, logs, and reports.",
   "author": {
     "name": "ai-plan-go",

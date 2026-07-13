@@ -79,6 +79,7 @@
 
 | 版本 | 主要变化 |
 |---|---|
+| 0.2.11 | 明确 README 面向人，偏宣传和使用指南；SKILL.md 面向 AI，承载流程控制和模板规则。 |
 | 0.2.10 | 明确 README 分工、项目结构说明和版本同步规则，避免市场页、插件包说明和技能规则漂移。 |
 | 0.2.9 | 新增 Do 脚本流程计划文档要求，避免生成插件的运行脚本成为黑盒。 |
 | 0.2.8 | 新增步骤检查确认表门禁，要求逐项确认参数、状态、风险和处理动作后再生成自动化技能。 |
@@ -138,7 +139,7 @@ pdca-skill-creator/
 - 插件市场：`ai-plan-go`
 - 发布仓库：<https://github.com/ai-plan-go/plugins>
 - Git 地址：`https://github.com/ai-plan-go/plugins.git`
-- 当前版本：`0.2.10`
+- 当前版本：`0.2.11`
 
 后续其他会话需要识别本插件时，优先查看本节、`marketplace.json` 和 `plugins/pdca-skill-creator/.codex-plugin/plugin.json`。
 
@@ -224,7 +225,7 @@ cp -R plugins/pdca-skill-creator/skills/pdca-skill-creator ~/.codex/skills/
 
 ## 版本
 
-当前创建器版本：`0.2.10`
+当前创建器版本：`0.2.11`
 
 来源仓库：<https://github.com/ai-plan-go/plugins.git>
 

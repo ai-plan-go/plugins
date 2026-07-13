@@ -9,7 +9,7 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 
 本技能是“元技能”：它负责创建或改进另一个具备 PDCA 闭环能力的具体业务技能。
 
-当前创建器版本：`0.2.10`
+当前创建器版本：`0.2.11`
 
 来源仓库：`https://github.com/ai-plan-go/plugins.git`
 
@@ -19,7 +19,7 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 - 插件市场：`ai-plan-go`
 - 发布仓库：`https://github.com/ai-plan-go/plugins`
 - Git 地址：`https://github.com/ai-plan-go/plugins.git`
-- 当前版本：`0.2.10`
+- 当前版本：`0.2.11`
 - 识别说明：后续其他会话需要定位或发布本技能时，优先查看本节、`plugins-publish/marketplace.json` 和 `plugins-publish/plugins/pdca-skill-creator/.codex-plugin/plugin.json`。
 
 ## 维护同步约束
@@ -27,7 +27,8 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 本节用于维护 `pdca-skill-creator` 自身，避免 README、发布包和技能行为规则分裂。
 
 - 任何会影响生成行为、业务控制边界、成熟度判定、自动化确认、Do/Check/Act 流程、输出契约或质量门禁的变更，必须先写入本 `SKILL.md`，再同步到 `references/pdca-stage-template.md` 和相关检查脚本。
-- README 只做摘要、安装说明、市场介绍或工作区维护说明；不得把新的业务控制规则只写在 README 中。
+- README 面向人，偏宣传、安装、使用指南、包说明和维护导航；本 `SKILL.md` 面向 AI，才承载真正的业务流程控制、生成模板、质量门禁和执行约束。
+- 不得把新的业务控制规则只写在 README 中。README 只能用人类友好的语言摘要规则，并链接到权威文件。
 - README 分工和发布目录结构以 `docs/repository-structure.md` 为准。
 - 发布前必须确认 `plugins-publish/plugins/pdca-skill-creator/.codex-plugin/plugin.json`、发布包内 `SKILL.md`、发布仓库 README 和插件包 README 的版本号一致。
 - 如果发现 README 与本 `SKILL.md` 冲突，以本 `SKILL.md` 为准，并把 README 改回摘要说明。
@@ -351,7 +352,7 @@ L3/L4 技能必须让以下契约互相一致：
 
 生成的业务技能还应在 `references/plan-history.md` 保留历史需求和 Plan 记录，用于 Act 复盘优化时按需披露加载，避免迭代时丢失早期需求、约束和决策原因。
 
-生成的业务技能必须声明生成来源：在 `SKILL.md` 正文靠前位置写明基于 `pdca-skill-creator` 生成，并记录来源仓库地址、创建器版本、生成日期和成熟度等级。默认创建器版本使用当前版本 `0.2.10`；若版本未知，标记为 `unknown`，不要省略该字段。
+生成的业务技能必须声明生成来源：在 `SKILL.md` 正文靠前位置写明基于 `pdca-skill-creator` 生成，并记录来源仓库地址、创建器版本、生成日期和成熟度等级。默认创建器版本使用当前版本 `0.2.11`；若版本未知，标记为 `unknown`，不要省略该字段。
 
 ## 生成技能质量门禁
 
