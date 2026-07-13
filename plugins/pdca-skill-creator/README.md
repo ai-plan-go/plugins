@@ -14,7 +14,7 @@ If this README conflicts with `skills/pdca-skill-creator/SKILL.md`, the skill fi
 
 ## Version
 
-- Current version: `0.2.11`
+- Current version: `0.2.12`
 - Manifest: `.codex-plugin/plugin.json`
 - Skill entry: `skills/pdca-skill-creator/SKILL.md`
 
@@ -26,6 +26,10 @@ The current package requires generated executable skills to include:
 
 - A step-by-step confirmation table for automation-style tasks.
 - A Do-script run plan document at `references/do-run-plan.md`.
+- Install, reinstall, installed-cache synchronization, structure validation, and a post-install dry run for generated plugins.
+- Configurable Python runtime parameters for Windows scheduler entry points.
+- Sample-based crawler and classifier checks that validate real fields, evidence, and expected candidate results.
+- Actionable network, timeout, HTTP, login or captcha, selector, and proxy diagnostics.
 - Plan, Do, Check, and Act stages with inputs, actions, outputs, exceptions, evidence, and confirmation points.
 - Executable scaffolds such as `init_project.py`, `run_task.py`, `check_outputs.py`, and `smoke_test.py` when L3/L4 maturity is targeted.
 - Quality gates for generic PDCA structure and business-specific use cases.

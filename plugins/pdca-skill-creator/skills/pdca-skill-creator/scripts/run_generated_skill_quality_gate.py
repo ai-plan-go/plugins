@@ -100,7 +100,13 @@ def forbidden_files(skill_dir: Path) -> list[str]:
     found: list[str] = []
     for path in skill_dir.rglob("*"):
         rel = path.relative_to(skill_dir)
-        if "__pycache__" in rel.parts or "work_smoke" in rel.parts or path.suffix.lower() == ".pyc":
+        if (
+            "__pycache__" in rel.parts
+            or "work_smoke" in rel.parts
+            or "tmp_smoke" in rel.parts
+            or path.suffix.lower() == ".pyc"
+            or path.name in {"business-use-case-test.json", "business-use-case-test-report.md", "business-act-improvements.md"}
+        ):
             found.append(rel.as_posix())
     return sorted(found)
 
@@ -141,15 +147,34 @@ def run_quality_gate(candidate_dir: Path) -> dict:
     run_task = read_text(skill_dir / "scripts" / "run_task.py")
     check_outputs = read_text(skill_dir / "scripts" / "check_outputs.py")
     smoke_test = read_text(skill_dir / "scripts" / "smoke_test.py")
+    run_daily = read_text(skill_dir / "scripts" / "run_daily_check.ps1")
+    do_run_plan = read_text(skill_dir / "references" / "do-run-plan.md")
+    deployment_contract = read_text(skill_dir / "references" / "deployment-contract.md")
+    business_profile = read_text(skill_dir / "references" / "business-use-case-profile.json")
+    business_test = read_text(skill_dir / "scripts" / "run_business_use_case_test.py")
 
-    if (skill_dir / "references" / "check-rules.yaml").exists() and not script_mentions(check_outputs, "check-rules"):
+    if any((skill_dir / "references" / name).exists() for name in ["check-rules.yaml", "check-rules.yml", "check-rules.json"]) and not script_mentions(check_outputs, "check-rules"):
         issues.append({"priority": "P1", "type": "check_rules_not_consumed", "detail": "check_outputs.py should read references/check-rules.yaml"})
     if (skill_dir / "references" / "output-schema.json").exists() and not script_mentions(check_outputs, "output-schema"):
         issues.append({"priority": "P1", "type": "schema_not_consumed", "detail": "check_outputs.py should read references/output-schema.json"})
-    if (skill_dir / "references" / "selectors.yaml").exists() and not script_mentions(run_task, "selectors"):
+    if any((skill_dir / "references" / name).exists() for name in ["selectors.yaml", "selectors.yml", "selectors.json"]) and not script_mentions(run_task, "selectors"):
         issues.append({"priority": "P1", "type": "selectors_not_consumed", "detail": "run_task.py should read references/selectors.yaml"})
     if smoke_test and not re.search(r"init_project|run_task|check_outputs", smoke_test, re.I):
         issues.append({"priority": "P1", "type": "weak_smoke_test", "detail": "smoke_test.py should exercise init/run/check chain"})
+    if run_daily and re.search(r"^\s*python\s+", run_daily, re.I | re.M) and not re.search(r"\$Python|param\s*\([^)]*Python", run_daily, re.I | re.S):
+        issues.append({"priority": "P1", "type": "run_daily_hardcodes_python", "detail": "run_daily_check.ps1 should accept a configurable Python path"})
+    if candidate_type == "plugin":
+        install_text = do_run_plan + "\n" + deployment_contract + "\n" + text
+        missing_install_terms = [term for term in ["安装", "重装", "缓存", ".codex-plugin", "plugin.json", "skills/"] if term.lower() not in install_text.lower()]
+        if missing_install_terms:
+            issues.append({"priority": "P1", "type": "missing_install_verification", "detail": "plugin install verification missing: " + ", ".join(missing_install_terms)})
+    if re.search(r"爬|crawl|crawler|采集|抓取|网页|页面", text, re.I):
+        expected_terms = ["network_permission_denied", "timeout", "http_error", "captcha_or_login", "selector_miss"]
+        missing_diag = [term for term in expected_terms if term.lower() not in (run_task + check_outputs + deployment_contract).lower()]
+        if len(missing_diag) >= 3:
+            issues.append({"priority": "P1", "type": "weak_network_diagnostics", "detail": "crawler diagnostics should distinguish common failure causes; missing: " + ", ".join(missing_diag)})
+        if not re.search(r"sample|expected|样例|期望|candidate|候选", business_profile + business_test + smoke_test, re.I):
+            issues.append({"priority": "P1", "type": "missing_business_sample_expectation", "detail": "crawler/classification tests should include sample expected key fields and classification outcome"})
     if maturity_overclaim(text):
         issues.append({"priority": "P1", "type": "possible_maturity_overclaim", "detail": "current maturity appears to claim L4 while placeholder markers exist"})
     if not re.search(r"自我优化|self[- ]?optimization", text, re.I) or not re.search(r"复测|retest|re-test", text, re.I):

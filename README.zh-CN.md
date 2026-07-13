@@ -56,6 +56,7 @@
 ### 质量门禁与评分
 
 - 保留 `scripts/run_creator_use_case_test.py`，用默认亚马逊 ASIN 用例做创建器回归测试。
+- 新增秀动后摇回归用例，覆盖安装验证、运行时选择、字段质量、分类证据和网络诊断。
 - 新增 `scripts/run_generated_skill_quality_gate.py`，用于不绑定业务关键词的通用规范评分。
 - 要求新生成的技能自带 `scripts/score_skill_quality.py` 和 `references/skill-quality-rubric.json`，用于通用规范验收。
 - 要求新生成的技能自带 `scripts/run_business_use_case_test.py` 和 `references/business-use-case-profile.json`，用于当前业务专属验收。
@@ -71,14 +72,19 @@
 ### 插件交付与清洁发布
 
 - 用户要求插件或 Codex 可安装产物时，默认生成 `.codex-plugin/plugin.json` 和 `skills/` 目录。
+- 要求安装、重装、已安装缓存同步、结构检查和至少一次安装后 dry-run 都有可验证说明。
+- Windows 定时入口必须允许显式指定 Python 运行时，不能假设裸 `python` 可用。
+- 爬虫和分类技能的 smoke test 必须校验样例字段与业务分类结果，而不只是文件是否存在。
+- 对网络权限、超时、HTTP、登录或验证码、选择器和代理等采集失败分类诊断，并给出复跑建议。
 - zip 只能作为附加传输包，不能替代可安装插件目录。
-- 成品目录不得包含 `__pycache__/`、`*.pyc`、`work_smoke/`、临时日志和本地测试输出。
+- 成品目录不得包含 `__pycache__/`、`*.pyc`、`work_smoke/`、`tmp_smoke/`、业务测试报告、临时日志和本地测试输出。
 - 测试脚本支持普通技能目录和可安装插件根目录，并在报告中标明候选类型。
 
 ## 版本摘要
 
 | 版本 | 主要变化 |
 |---|---|
+| 0.2.12 | 新增安装后验证、可配置 Python 运行入口、样例驱动的爬虫分类测试、细分网络诊断、秀动后摇回归用例和更严格的交付清理。 |
 | 0.2.11 | 明确 README 面向人，偏宣传和使用指南；SKILL.md 面向 AI，承载流程控制和模板规则。 |
 | 0.2.10 | 明确 README 分工、项目结构说明和版本同步规则，避免市场页、插件包说明和技能规则漂移。 |
 | 0.2.9 | 新增 Do 脚本流程计划文档要求，避免生成插件的运行脚本成为黑盒。 |
@@ -139,7 +145,7 @@ pdca-skill-creator/
 - 插件市场：`ai-plan-go`
 - 发布仓库：<https://github.com/ai-plan-go/plugins>
 - Git 地址：`https://github.com/ai-plan-go/plugins.git`
-- 当前版本：`0.2.11`
+- 当前版本：`0.2.12`
 
 后续其他会话需要识别本插件时，优先查看本节、`marketplace.json` 和 `plugins/pdca-skill-creator/.codex-plugin/plugin.json`。
 
@@ -225,7 +231,7 @@ cp -R plugins/pdca-skill-creator/skills/pdca-skill-creator ~/.codex/skills/
 
 ## 版本
 
-当前创建器版本：`0.2.11`
+当前创建器版本：`0.2.12`
 
 来源仓库：<https://github.com/ai-plan-go/plugins.git>
 

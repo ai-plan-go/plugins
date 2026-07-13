@@ -77,10 +77,26 @@ DO_RUN_PLAN_KEYWORDS = [
 OPTIONAL_CONTRACT_FILES = [
     "references/check-rules.yaml",
     "references/check-rules.md",
+    "references/check-rules.json",
     "references/output-schema.json",
     "references/output-schema.md",
     "references/selectors.yaml",
     "references/selectors.yml",
+    "references/selectors.json",
+]
+
+
+SHOWSTART_POSTROCK_RUBRIC = [
+    ("pdca", 10, ["Plan", "Do", "Check", "Act", "输入", "动作", "产物", "异常处理"]),
+    ("plugin_install", 12, [".codex-plugin", "plugin.json", "skills/", "安装", "重装", "缓存"]),
+    ("business_core", 14, ["秀动|showstart", "演出", "艺人", "后摇|post-rock|post rock", "候选|candidate"]),
+    ("crawler_framework", 12, ["URL|url", "timeout", "diagnostic|诊断", "selector|选择器", "evidence|证据"]),
+    ("classification_expectation", 12, ["样例|sample", "期望|expected", "confidence|置信", "evidence|证据", "sync_plan|同步"]),
+    ("runtime_entry", 10, ["run_daily_check.ps1", "Python", "$Python|-Python", "dry-run", "退出码|exit code"]),
+    ("contract_consistency", 10, ["check-rules", "output-schema", "required_outputs", "deployment-contract"]),
+    ("maturity", 8, ["目标成熟度", "当前成熟度", "L3", "L4", "占位", "待确认"]),
+    ("self_check_act", 8, ["smoke test", "自检", "Act", "plan-history", "复测|retest|re-test"]),
+    ("clean_delivery", 4, ["__pycache__", "tmp_smoke", "work_smoke", "清理|clean"]),
 ]
 
 
@@ -88,6 +104,39 @@ FORBIDDEN_DELIVERABLE_PATTERNS = [
     "__pycache__",
     "*.pyc",
     "work_smoke",
+    "tmp_smoke",
+    "business-use-case-test.json",
+    "business-use-case-test-report.md",
+    "business-act-improvements.md",
+]
+
+
+PLUGIN_INSTALL_KEYWORDS = [
+    "安装",
+    "重装",
+    "缓存",
+    ".codex-plugin",
+    "plugin.json",
+    "skills/",
+]
+
+
+NETWORK_DIAGNOSTIC_KEYWORDS = [
+    "network_permission_denied",
+    "timeout",
+    "http_error",
+    "captcha_or_login",
+    "selector_miss",
+]
+
+
+SAMPLE_EXPECTATION_KEYWORDS = [
+    "sample",
+    "expected",
+    "样例",
+    "期望",
+    "candidate",
+    "候选",
 ]
 
 
@@ -114,6 +163,12 @@ def all_text(skill_dir: Path) -> str:
 
 def contains_any_file(skill_dir: Path, names: list[str]) -> bool:
     return any((skill_dir / name).exists() for name in names)
+
+
+def select_rubric(text: str) -> list[tuple[str, int, list[str]]]:
+    if re.search(r"showstart|秀动|后摇|post-rock|post rock", text, re.I):
+        return SHOWSTART_POSTROCK_RUBRIC
+    return RUBRIC
 
 
 def resolve_skill_dir(candidate_dir: Path) -> tuple[Path, str]:
@@ -160,7 +215,13 @@ def forbidden_deliverable_files(skill_dir: Path) -> list[str]:
     for path in skill_dir.rglob("*"):
         rel = path.relative_to(skill_dir)
         rel_text = rel.as_posix()
-        if "__pycache__" in rel.parts or "work_smoke" in rel.parts or path.suffix == ".pyc":
+        if (
+            "__pycache__" in rel.parts
+            or "work_smoke" in rel.parts
+            or "tmp_smoke" in rel.parts
+            or path.suffix == ".pyc"
+            or path.name in {"business-use-case-test.json", "business-use-case-test-report.md", "business-act-improvements.md"}
+        ):
             forbidden.append(rel_text)
     return sorted(forbidden)
 
@@ -216,12 +277,12 @@ def run_use_case_test(skill_dir: Path) -> dict:
             preview += f", ... (+{len(forbidden_files) - 8})"
         issues.append({"priority": "P1", "type": "unclean_deliverable", "detail": preview})
 
-    if not contains_any_file(skill_dir, ["references/check-rules.yaml", "references/check-rules.md"]):
+    if not contains_any_file(skill_dir, ["references/check-rules.yaml", "references/check-rules.yml", "references/check-rules.md", "references/check-rules.json"]):
         issues.append({"priority": "P1", "type": "missing_check_rules", "detail": "references/check-rules.*"})
     if not contains_any_file(skill_dir, ["references/output-schema.json", "references/output-schema.md"]):
         issues.append({"priority": "P1", "type": "missing_output_schema", "detail": "references/output-schema.*"})
-    if not contains_any_file(skill_dir, ["references/selectors.yaml", "references/selectors.yml"]):
-        issues.append({"priority": "P1", "type": "missing_selectors", "detail": "references/selectors.yaml"})
+    if not contains_any_file(skill_dir, ["references/selectors.yaml", "references/selectors.yml", "references/selectors.json"]):
+        issues.append({"priority": "P1", "type": "missing_selectors", "detail": "references/selectors.*"})
 
     if candidate_type != "plugin":
         issues.append({
@@ -229,8 +290,17 @@ def run_use_case_test(skill_dir: Path) -> dict:
             "type": "not_installable_codex_plugin",
             "detail": "candidate is a bare skill directory; installable Codex deliverables need .codex-plugin/plugin.json and skills/{name}/SKILL.md",
         })
+    else:
+        plugin_root = requested_dir.resolve()
+        if not (plugin_root / ".codex-plugin" / "plugin.json").exists() or not (plugin_root / "skills").exists():
+            issues.append({
+                "priority": "P1",
+                "type": "plugin_install_structure_incomplete",
+                "detail": "plugin root must include .codex-plugin/plugin.json and skills/",
+            })
 
-    for name, points, keywords in RUBRIC:
+    selected_rubric = select_rubric(text)
+    for name, points, keywords in selected_rubric:
         score, missing = keyword_score(text, keywords, points)
         dimension_scores[name] = {
             "score": score,
@@ -242,16 +312,19 @@ def run_use_case_test(skill_dir: Path) -> dict:
     run_task = read_text(skill_dir / "scripts" / "run_task.py")
     check_outputs = read_text(skill_dir / "scripts" / "check_outputs.py")
     smoke_test = read_text(skill_dir / "scripts" / "smoke_test.py")
+    run_daily = read_text(skill_dir / "scripts" / "run_daily_check.ps1")
+    business_profile = read_text(skill_dir / "references" / "business-use-case-profile.json")
+    business_test = read_text(skill_dir / "scripts" / "run_business_use_case_test.py")
     deployment_contract = read_text(skill_dir / "references" / "deployment-contract.md")
     do_run_plan = read_text(skill_dir / "references" / "do-run-plan.md")
     skill_md = read_text(skill_dir / "SKILL.md")
 
-    if run_task and not re.search(r"playwright|async_playwright|sync_playwright", run_task, re.I):
-        issues.append({"priority": "P0", "type": "crawler_framework_missing", "detail": "run_task.py does not reference Playwright"})
-    if run_task and contains_any_file(skill_dir, ["references/selectors.yaml", "references/selectors.yml"]):
+    if run_task and not re.search(r"playwright|async_playwright|sync_playwright|urlopen|requests\.|httpx|aiohttp", run_task, re.I):
+        issues.append({"priority": "P1", "type": "crawler_framework_missing", "detail": "run_task.py should include a real page collection path such as Playwright or an HTTP client plus diagnostics"})
+    if run_task and contains_any_file(skill_dir, ["references/selectors.yaml", "references/selectors.yml", "references/selectors.json"]):
         if not script_consumes_file(run_task, "selectors"):
             issues.append({"priority": "P1", "type": "selectors_not_consumed", "detail": "run_task.py does not read selectors config"})
-    if check_outputs and contains_any_file(skill_dir, ["references/check-rules.yaml", "references/check-rules.md"]):
+    if check_outputs and contains_any_file(skill_dir, ["references/check-rules.yaml", "references/check-rules.md", "references/check-rules.json"]):
         if not script_consumes_file(check_outputs, "check-rules"):
             issues.append({"priority": "P1", "type": "check_rules_not_consumed", "detail": "check_outputs.py does not read check-rules"})
     if check_outputs and contains_any_file(skill_dir, ["references/output-schema.json", "references/output-schema.md"]):
@@ -259,12 +332,63 @@ def run_use_case_test(skill_dir: Path) -> dict:
             issues.append({"priority": "P1", "type": "schema_not_consumed", "detail": "check_outputs.py does not read output-schema"})
     if smoke_test and not re.search(r"check_outputs|run_task|init_project", smoke_test, re.I):
         issues.append({"priority": "P1", "type": "weak_smoke_test", "detail": "smoke_test.py does not exercise init/run/check chain"})
-    if smoke_test and re.search(r"parents\s*\[\s*1\s*\]|parent\.parent|references.+plan-history|plan-history.+open\s*\(", smoke_test, re.I):
+    smoke_writes_runtime_under_source = bool(
+        re.search(
+            r"(?:skill_dir|skill_root)\s*/\s*[\"'](?:tmp_smoke|work_smoke|outputs?)[\"']",
+            smoke_test,
+            re.I,
+        )
+    )
+    smoke_writes_plan_history = bool(
+        re.search(
+            r"(?:plan-history.{0,200}(?:write_text|open\s*\()|(?:write_text|open\s*\().{0,200}plan-history)",
+            smoke_test,
+            re.I | re.S,
+        )
+    )
+    if smoke_test and (smoke_writes_runtime_under_source or smoke_writes_plan_history):
         issues.append({
             "priority": "P1",
             "type": "smoke_writes_skill_source",
             "detail": "smoke_test.py appears to write references/plan-history.md under the skill source; runtime evidence should go to the work/output directory or fail gracefully on read-only installs",
         })
+    if smoke_test and not any(keyword.lower() in (smoke_test + business_profile + business_test).lower() for keyword in SAMPLE_EXPECTATION_KEYWORDS):
+        issues.append({
+            "priority": "P1",
+            "type": "missing_business_sample_expectation",
+            "detail": "crawler/classification candidates should include at least one sample expectation for key fields and candidate classification",
+        })
+    if run_daily:
+        if re.search(r"^\s*python\s+", run_daily, re.I | re.M) and not re.search(r"\$Python|param\s*\([^)]*Python", run_daily, re.I | re.S):
+            issues.append({
+                "priority": "P1",
+                "type": "run_daily_hardcodes_python",
+                "detail": "run_daily_check.ps1 should accept a configurable Python path instead of relying on PATH python",
+            })
+        if not re.search(r"Python", do_run_plan + deployment_contract + skill_md, re.I):
+            issues.append({
+                "priority": "P1",
+                "type": "python_runtime_not_documented",
+                "detail": "run documentation should mention system Python or Codex bundled Python usage",
+            })
+    if candidate_type == "plugin":
+        install_text = deployment_contract + "\n" + do_run_plan + "\n" + skill_md
+        missing_install = [keyword for keyword in PLUGIN_INSTALL_KEYWORDS if keyword.lower() not in install_text.lower()]
+        if missing_install:
+            issues.append({
+                "priority": "P1",
+                "type": "missing_install_verification",
+                "detail": "plugin install verification is missing: " + ", ".join(missing_install),
+            })
+    if re.search(r"爬|crawl|crawler|采集|抓取|showstart|网页|页面", text, re.I):
+        diagnostics_blob = run_task + "\n" + check_outputs + "\n" + deployment_contract
+        missing_diagnostics = [keyword for keyword in NETWORK_DIAGNOSTIC_KEYWORDS if keyword.lower() not in diagnostics_blob.lower()]
+        if len(missing_diagnostics) >= 3:
+            issues.append({
+                "priority": "P1",
+                "type": "weak_network_diagnostics",
+                "detail": "crawler diagnostics should distinguish permission, timeout, http, captcha/login, and selector failures; missing: " + ", ".join(missing_diagnostics),
+            })
     if run_task:
         if not do_run_plan:
             issues.append({

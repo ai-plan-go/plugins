@@ -1,7 +1,7 @@
 {
   "name": "pdca-skill-creator",
-  "version": "0.2.11",
-  "description": "Create PDCA-based Codex skills with Do-script run plan docs, step-by-step parameter confirmation tables, preflight automation confirmation, Codex scheduling classification, installable-plugin gates, source-safe smoke tests, two-layer generated-skill scoring, business-core-first execution, evidence-backed maturity grading, self-optimization matrices, crawler scaffolds, contract-consistent checks, clean packaging, logs, and reports.",
+  "version": "0.2.12",
+  "description": "Create PDCA-based Codex skills with install verification, configurable Python runtime entrypoints, sample-based crawler smoke tests, network diagnostics, two-layer scoring, business-core-first execution, evidence-backed maturity grading, contract-consistent checks, clean packaging, logs, and reports.",
   "author": {
     "name": "ai-plan-go",
     "url": "https://github.com/ai-plan-go"
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "PDCA Skill Creator",
     "shortDescription": "Create self-checking PDCA Codex skills",
-    "longDescription": "Create Codex skills that follow a PDCA loop with Plan, Do, Check, and Act stages while preserving the business core first. It requires a Do-script run plan document for executable skills, explaining the run entrypoint, parameter table, preflight checks, execution steps, outputs, logs, observable progress, failure diagnosis, Check handoff, and user confirmation points. It also requires a step-by-step confirmation table for automation skills, covering each parameter, current value or default, confirmation status, unresolved risk, and handling action. It confirms data sources, output formats, trigger plans, and runtime parameters before generating automation skills; distinguishes local scheduler scripts from Codex arranged tasks; generates core implementation plans, crawler scaffolds for page inspection tasks, selector and field extraction matrices, evidence-backed maturity grading, capability matrices, layered self-optimization evaluation with retest evidence paths, generic generated-skill quality gates, business-specific use case test scripts, executable scaffolds, contract-consistent rule-driven checks, plugin-aware use case tests, source-safe smoke tests, clean installable plugin directories, evidence, logs, health diagnosis, historical requirements, and iterative creator use case test reports.",
+    "longDescription": "Create Codex skills that follow a PDCA loop with Plan, Do, Check, and Act stages while preserving the business core first. It requires a Do-script run plan document for executable skills, a step-by-step confirmation table for automation skills, and install verification for Codex plugins. Generated Windows scheduler entrypoints accept an explicit Python runtime, while crawler and classifier smoke tests validate sample business outcomes instead of only checking file existence. Collection failures are categorized across network permissions, timeouts, HTTP errors, login or captcha blocks, selector misses, proxy requirements, and unknown errors. The creator also generates core implementation plans, selector and field extraction matrices, evidence-backed maturity grading, capability matrices, layered self-optimization evaluation, generic quality gates, business-specific use case tests, contract-consistent checks, clean plugin directories, logs, health diagnosis, historical requirements, and iterative creator regression reports.",
     "developerName": "ai-plan-go",
     "category": "Productivity",
     "capabilities": [

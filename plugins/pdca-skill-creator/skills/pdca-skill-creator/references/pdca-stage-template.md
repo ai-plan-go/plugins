@@ -44,6 +44,10 @@
 
 L3/L4 可执行技能必须生成 `references/do-run-plan.md`。该文档用于补充说明 Do 阶段脚本流程，让用户在不阅读源码的情况下理解脚本会做什么、怎么跑、产出什么、失败如何诊断。不得只生成 `scripts/run_task.py` 而没有流程计划文档。
 
+生成 Codex 可安装插件时，必须同时生成安装后验证说明，覆盖安装、重装、源码修正后同步已安装缓存、`.codex-plugin/plugin.json`、`skills/` 和 `skills/{SKILL_NAME}/SKILL.md` 检查。没有安装后验证说明的插件产物不得标为交付完成。
+
+生成 Windows 定时入口时，`run_daily_check.ps1` 必须支持可配置 Python 路径参数，例如 `-Python`；文档必须同时说明系统 Python 和 Codex bundled Python 的调用方式，避免只依赖 PATH 中的裸 `python`。
+
 ## 步骤检查确认表
 
 生成自动化、爬虫、巡检、报表或定时技能前，必须先生成并填写步骤检查确认表。该表必须写入生成技能的 `SKILL.md` 或 `references/deployment-contract.md`，并追加到 `references/plan-history.md`。
@@ -161,6 +165,8 @@ P2 问题：
 
 通用评分和业务评分都应默认采用 100 分制、85 分通过，且没有 P0/P1 阻断项才可通过。业务依赖外部账号、网络、权限或人工输入时，不得伪造成功，应输出阻断诊断并标记为待确认。
 
+业务用例评分必须包含至少一个样例期望结果，不能只检查脚本关键词或文件存在。对爬虫和分类任务，profile 应写入样例 URL 或样例文本、期望关键字段、期望分类结果和最小证据要求；评分脚本必须校验关键字段质量，例如业务标题不能是站点通用标题、艺人/对象字段不能为空、分类证据不能为空、正例应进入候选或输出明确待复核原因。
+
 ## 历史需求记录：references/plan-history.md
 
 每个被生成的 PDCA 业务技能都应维护 `references/plan-history.md`。
@@ -253,6 +259,7 @@ P2 问题：
 - 如果创建了 `references/selectors.yaml`，采集脚本必须实际读取并消费该配置。不得只生成选择器文件，却在脚本中硬编码少量选择器或完全跳过选择器文件。
 - 采集脚本应提供通用字段提取路径：加载选择器、按字段尝试候选选择器、fallback 到页面标题或正文文本、写入未命中诊断和证据路径。
 - 登录、验证码、代理或风控未知时，输出 `blocked_by_login`、`captcha_detected`、`proxy_required` 等诊断，并保留可运行的访问、截图和失败证据链路。
+- 采集失败诊断必须尽量细分为 `network_permission_denied`、`timeout`、`http_error`、`captcha_or_login`、`selector_miss`、`proxy_required` 或 `unknown_collection_error`，并给出可复跑建议。
 - 对用户要求的每个核心字段，生成字段提取矩阵，标注提取策略、选择器或 fallback、证据路径和未知项。
 
 如果真实采集框架没有生成，当前成熟度最高只能是 `L2 规则型`。如果采集框架存在但字段选择器待确认，最高只能是 `L3 可执行脚手架`。
@@ -562,9 +569,10 @@ Check 退出码：
 - `references/check-rules.yaml` 的 `required_outputs` 必须能在 Do 阶段结构化结果的 `outputs` 中找到对应路径，或明确记录为待确认能力。
 - `references/output-schema.json` 的输出字段必须和 Do 阶段实际输出字段一致。
 - 爬虫类技能如果存在 `references/selectors.yaml`，必须检查采集脚本是否读取该文件并用于字段提取。
+- 对爬虫或分类技能，必须检查样例期望结果：关键字段不能为空、站点通用标题不能冒充业务标题、分类证据不能为空、用户给出的正例必须进入候选或输出明确待复核原因。
 - 报表类或截图嵌入类技能必须检查 Do 脚本或部署契约是否包含旧图片清理策略；缺失时至少标记为 P2，若会导致图片重叠或错误证据复用则标记为 P1。
 - 如果宣称具备自我优化可执行能力，必须检查 Act 是否根据 Check 结果生成改进项、是否写入 `references/plan-history.md`、是否更新规则/脚本/选择器/阈值中的至少一种；缺少运行证据时只能标为“具备机制，未验证可执行”。
-- 成品目录不得包含 `__pycache__/`、`*.pyc`、`work_smoke/`、临时日志或本地自检输出。
+- 成品目录不得包含 `__pycache__/`、`*.pyc`、`work_smoke/`、`tmp_smoke/`、临时日志、本地自检输出或业务测试报告残留。
 
 ### 插件交付格式
 
@@ -588,5 +596,6 @@ Check 退出码：
 
 - `.codex-plugin/plugin.json` 必须存在，并让 `skills` 指向 `./skills/`。
 - `skills/{SKILL_NAME}/SKILL.md` 必须存在且 frontmatter 有效。
+- `references/deployment-contract.md` 或 `references/do-run-plan.md` 必须包含安装后验证、重装、缓存同步和结构检查说明。
 - zip 只能作为附加传输包；如果生成 zip，解压后必须仍是上述插件目录结构。
 - 没有 `.codex-plugin/plugin.json` 的产物只能称为技能目录或技能包，不能称为可安装插件。

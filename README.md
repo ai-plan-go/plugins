@@ -56,6 +56,7 @@ Generated skills use four maturity levels:
 ### Quality Gates And Scoring
 
 - Keeps `scripts/run_creator_use_case_test.py` for creator regression testing with the default Amazon ASIN use case.
+- Adds a ShowStart post-rock regression case for install verification, runtime selection, field quality, classification evidence, and network diagnostics.
 - Adds a generic generated-skill quality gate through `scripts/run_generated_skill_quality_gate.py`.
 - Requires newly generated skills to include `scripts/score_skill_quality.py` and `references/skill-quality-rubric.json` for business-neutral PDCA quality scoring.
 - Requires newly generated skills to include `scripts/run_business_use_case_test.py` and `references/business-use-case-profile.json` for scenario-specific scoring.
@@ -71,14 +72,19 @@ Generated skills use four maturity levels:
 ### Plugin Delivery And Clean Packaging
 
 - Generates a Codex-installable plugin directory with `.codex-plugin/plugin.json` and `skills/` when plugin delivery is requested.
+- Requires install, reinstall, installed-cache synchronization, structure checks, and one post-install dry run to be documented and verifiable.
+- Requires Windows scheduler entry points to accept an explicit Python runtime instead of assuming bare `python`.
+- Requires crawler and classifier smoke tests to validate expected sample fields and business classification results.
+- Classifies collection failures such as network permission, timeout, HTTP, login or captcha, selector, and proxy errors with rerun guidance.
 - Treats zip files as optional transport archives, not as a replacement for installable plugin structure.
-- Excludes `__pycache__/`, `*.pyc`, `work_smoke/`, temporary logs, and local test outputs from final deliverables.
+- Excludes `__pycache__/`, `*.pyc`, `work_smoke/`, `tmp_smoke/`, business test reports, temporary logs, and local test outputs from final deliverables.
 - Supports testing either plain skill folders or installable plugin roots.
 
 ## Version Summary
 
 | Version | Main change |
 |---|---|
+| 0.2.12 | Added post-install verification, configurable Python runtime entrypoints, sample-based crawler classification tests, detailed network diagnostics, a ShowStart post-rock regression case, and stricter delivery cleanup. |
 | 0.2.11 | Clarified that README files are human-facing promotion and usage guides, while SKILL.md is the AI-facing source for workflow control and templates. |
 | 0.2.10 | Clarified README roles, repository structure, and version synchronization rules to prevent documentation drift. |
 | 0.2.9 | Added required Do-script run plan docs so generated runtime scripts are not black boxes. |
@@ -140,7 +146,7 @@ The simplest way is to add this repository as a Codex plugin marketplace.
 - Marketplace: `ai-plan-go`
 - Published repository: <https://github.com/ai-plan-go/plugins>
 - Git URL: `https://github.com/ai-plan-go/plugins.git`
-- Current version: `0.2.11`
+- Current version: `0.2.12`
 
 Future sessions should use this section, `marketplace.json`, and `plugins/pdca-skill-creator/.codex-plugin/plugin.json` to quickly identify the published plugin.
 
@@ -226,7 +232,7 @@ The goal is not to make AI think harder every time. The goal is to make repeatab
 
 ## Version
 
-Current creator version: `0.2.11`
+Current creator version: `0.2.12`
 
 Source repository: <https://github.com/ai-plan-go/plugins.git>
 

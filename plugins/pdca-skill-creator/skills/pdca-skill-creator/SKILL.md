@@ -9,7 +9,7 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 
 本技能是“元技能”：它负责创建或改进另一个具备 PDCA 闭环能力的具体业务技能。
 
-当前创建器版本：`0.2.11`
+当前创建器版本：`0.2.12`
 
 来源仓库：`https://github.com/ai-plan-go/plugins.git`
 
@@ -19,7 +19,7 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 - 插件市场：`ai-plan-go`
 - 发布仓库：`https://github.com/ai-plan-go/plugins`
 - Git 地址：`https://github.com/ai-plan-go/plugins.git`
-- 当前版本：`0.2.11`
+- 当前版本：`0.2.12`
 - 识别说明：后续其他会话需要定位或发布本技能时，优先查看本节、`plugins-publish/marketplace.json` 和 `plugins-publish/plugins/pdca-skill-creator/.codex-plugin/plugin.json`。
 
 ## 维护同步约束
@@ -48,7 +48,9 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 - 保守标注生成技能的成熟度等级，避免把脚手架、占位实现或待确认外部能力误认为已经可部署运行。
 - 生成后必须给出能力矩阵和自检结果，让用户知道哪些能力已实现、哪些只是占位、哪些还待确认。
 - 如果用户要求“插件”“Codex 可安装”“直接安装”或交付物需要进入 Codex 插件市场，默认交付可安装插件目录，而不是只交付 zip 压缩包。
+- 如果生成 Codex 插件，必须同时生成安装后验证说明或脚本化步骤，覆盖安装、重装、源码修正后同步到已安装缓存、`.codex-plugin/plugin.json`、`skills/` 和技能入口检查；不得只说“复制目录”。
 - 生成后必须做契约一致性检查，确认规则文件、输出 schema、脚本实际输出、smoke test 预期和发布目录格式互相一致。
+- 爬虫或分类类技能的自检不得只检查文件存在，必须包含至少一个样例期望结果，校验关键字段质量和业务分类命中情况。
 - 当用户要求对 `pdca-skill-creator` 做用例测试、回归测试、验收用例复测或自动优化时，必须进入“创建器用例测试闭环”，按需要完成用例生成测试、报告、修正和复测；不得把一次性测试需求误解为固定轮次或上线前强制轮次。
 - 将详细模板放入 `references/`，保持 `SKILL.md` 易读且可触发。
 
@@ -185,6 +187,16 @@ description: 创建或更新具备 PDCA 自检闭环能力的 Codex 技能。适
 - 对个人本地安装，优先提供插件目录路径；对市场发布，优先放入 `plugins-publish/plugins/{PLUGIN_NAME}/` 这类发布目录。
 - 不要把仅含 `SKILL.md` 的普通技能目录伪装成插件；没有 `.codex-plugin/plugin.json` 就只能称为技能目录或技能包。
 - 打包前必须排除 `__pycache__/`、`*.pyc`、`work_smoke/`、临时日志、临时输出和本地测试目录。
+
+### 安装后验证要求
+
+生成 Codex 可安装插件时，必须在 `references/deployment-contract.md` 或 `references/do-run-plan.md` 写明安装后验证流程，并让质量门禁能检查到这些内容：
+
+- 安装目标：本地 Codex 插件缓存路径或用户指定插件目录。
+- 重装流程：当源码目录修正后，如何同步到已安装缓存或重新安装。
+- 结构检查：确认 `.codex-plugin/plugin.json`、`skills/`、`skills/{SKILL_NAME}/SKILL.md` 存在。
+- 运行检查：安装后至少能执行一次 `init`、`run_task` 或 `smoke_test` 的 dry-run。
+- 风险提示：未刷新 Codex 或未同步缓存时，用户可能仍在运行旧版本。
 
 ## 产物成熟度等级
 
@@ -352,7 +364,7 @@ L3/L4 技能必须让以下契约互相一致：
 
 生成的业务技能还应在 `references/plan-history.md` 保留历史需求和 Plan 记录，用于 Act 复盘优化时按需披露加载，避免迭代时丢失早期需求、约束和决策原因。
 
-生成的业务技能必须声明生成来源：在 `SKILL.md` 正文靠前位置写明基于 `pdca-skill-creator` 生成，并记录来源仓库地址、创建器版本、生成日期和成熟度等级。默认创建器版本使用当前版本 `0.2.11`；若版本未知，标记为 `unknown`，不要省略该字段。
+生成的业务技能必须声明生成来源：在 `SKILL.md` 正文靠前位置写明基于 `pdca-skill-creator` 生成，并记录来源仓库地址、创建器版本、生成日期和成熟度等级。默认创建器版本使用当前版本 `0.2.12`；若版本未知，标记为 `unknown`，不要省略该字段。
 
 ## 生成技能质量门禁
 
@@ -465,6 +477,8 @@ L3/L4 技能必须让以下契约互相一致：
 
 页面状态重要时，不接受仅通过 HTTP 请求或响应内容进行模糊推断。
 
+Windows 定时入口不得硬编码裸 `python`。生成 `run_daily_check.ps1` 时必须支持 `-Python` 或等价参数，并在运行说明中给出系统 Python 与 Codex bundled Python 两种调用方式。若无法确定 Python 路径，脚本必须保守失败并提示用户传入路径。
+
 ## 脚本与检查器设计原则
 
 - 脚本优先提供最小稳定骨架，再逐步填充业务细节。
@@ -478,6 +492,7 @@ L3/L4 技能必须让以下契约互相一致：
 - 日志文件名应包含时间、项目或任务名；Check 默认定位最新一个日志文件。
 - 对未知凭据、未知选择器、未知报表表头，不生成假实现；生成参数、校验错误和待确认项。
 - 对未知选择器，不生成假字段值，但要生成选择器配置、fallback 提取策略和最小页面证据链路。
+- 对爬虫采集失败，诊断类型必须尽量区分 `network_permission_denied`、`timeout`、`http_error`、`captcha_or_login`、`selector_miss`、`proxy_required` 和 `unknown_collection_error`，并给出可复跑建议；不得只输出笼统的 `collection_failed`。
 - 对高风险外部服务，脚本默认 dry-run 或保守失败，不伪造成功结果；同时必须把该状态计入能力矩阵和成熟度降级。
 - `dry-run`、`stub` 和 `live` 模式必须语义清晰：`dry-run` 用于不触达外部服务的链路验证，`stub` 表示占位实现，`live` 表示真实业务执行。不得让三个模式输出无法区分。
 
@@ -490,11 +505,13 @@ L3/L4 技能必须让以下契约互相一致：
 - 对 Python 脚本做只读语法检查，避免在只读成品目录写入 `__pycache__`。
 - 使用最小样例输入运行初始化、Do 和 Check 链路。
 - 校验关键产物是否存在，例如结构化结果、日志、检查结果、报表或报告。
+- 对爬虫类或分类类技能，校验样例期望结果：关键字段不能为空、站点通用标题不能冒充业务标题、分类证据不能为空、用户给出的正例必须进入候选或输出明确待复核原因。
 - 校验输出契约一致性：规则要求、schema、Do 脚本输出、Check 脚本检查和部署契约必须使用同一组字段名。
 - 对爬虫类技能，校验采集脚本是否实际读取 `references/selectors.yaml`，并至少通过一个通用提取函数或字段提取路径消费该配置。
 - 区分预期失败和非预期失败：dry-run 核心字段为空可以是预期失败，但字段名不一致、规则未读取、产物路径缺失、schema 不匹配都必须判为非预期失败。
 - 记录 Do 和 Check 的退出码，并解释退出码是否符合预期。
 - 将自检摘要写入 `references/plan-history.md` 的本轮 Plan，或写入 `references/deployment-contract.md` 的验收记录。
+- 自检和业务用例评分产物必须写入 `outputs/`、`work_smoke/` 或用户指定测试目录，并在交付前清理；不得留在插件根目录或技能根目录。
 
 如果因为缺少外部权限、依赖、账号、网络、浏览器或写入权限导致不能运行自检，必须输出“未完成自检”的原因，不得把目标成熟度当作当前成熟度。
 
@@ -516,6 +533,8 @@ L3/L4 技能必须让以下契约互相一致：
 ### 固定测试用例
 
 如用户没有提供新的用例，默认使用 `references/use-case-test-amazon-asin.md` 中的亚马逊 ASIN 前台巡检用例。该用例覆盖多项目隔离、每日自动抓取、上一自然日基准对比、异常分级、双 Sheet 报表、截图证据、风控容错、PDCA 复盘等要求。
+
+如果用户反馈来自插件安装、运行、爬虫采集或业务分类命中问题，应优先选择与问题同类的回归用例。本创建器内置 `references/use-case-test-showstart-postrock.md`，用于覆盖 Codex 插件安装验证、Windows Python 路径、网络权限诊断、爬虫字段质量、后摇样例命中、dry-run 同步计划和交付清洁。
 
 ### 每轮产物
 
@@ -554,6 +573,14 @@ outputs/use-case-tests/{YYYYMMDD-HHMMSS}/round-{N}/
 | 成熟度保守判定 | 8 | 区分目标成熟度和当前成熟度，不把脚手架标成 L4 |
 | 可执行脚手架 | 10 | init、run、check、smoke、定时入口、退出码和日志 |
 | 自检与 Act 报告 | 10 | smoke test、用例测试报告、Act 改进清单、历史记录 |
+
+新增插件爬虫回归检查点：
+
+- 可安装插件结构完整，且安装后验证说明覆盖安装、重装和缓存同步。
+- `run_daily_check.ps1` 支持可配置 Python 路径，不硬编码裸 `python`。
+- 业务 smoke test 或业务评分包含样例期望结果，不只检查文件存在。
+- 网络失败诊断能区分权限、超时、HTTP、验证码/登录和选择器缺失。
+- 生成目录不含 `__pycache__`、`*.pyc`、`work_smoke`、`tmp_smoke` 或业务测试报告残留。
 
 ### 可执行用例测试脚本
 
@@ -599,10 +626,12 @@ python scripts/run_creator_use_case_test.py --skill-dir path\to\candidate --out 
 - 如果存在 Do 脚本，确认存在 `references/do-run-plan.md`，且说明脚本入口、参数、阶段流程、产物、日志、退出码、失败诊断和用户确认点。
 - 如果存在 Check 阶段，确认有检查规则文件；L3/L4 技能还应有 `scripts/check_outputs.py` 或等价检查器，并确认检查器读取规则文件而不是只硬编码规则。
 - 如果存在定时或部署描述，确认有入口脚本、参数样例、失败退出码和最新日志定位方式。
+- 如果存在 `run_daily_check.ps1`，确认支持可配置 Python 路径，且文档说明系统 Python 和 Codex bundled Python 两种用法。
 - 如果标注 L3/L4，确认已运行或生成 `scripts/smoke_test.py`，并记录自检结果。
+- 如果是爬虫或分类技能，确认 smoke test 或业务用例评分包含至少一个样例期望结果，并检查关键字段质量和分类命中。
 - 如果本轮是创建器用例测试，确认已生成 `use-case-test.json`、`use-case-test-report.md` 和 `act-improvements.md`，并说明是否达到通过线。
 - 如果用户要求插件形态，确认存在 `.codex-plugin/plugin.json`、`skills/{SKILL_NAME}/SKILL.md`，且最终交付包含可安装插件目录；zip 只能作为附加归档。
-- 确认成品目录不包含 `__pycache__/`、`*.pyc`、`work_smoke/`、临时日志、临时输出或本地测试目录。
+- 确认成品目录不包含 `__pycache__/`、`*.pyc`、`work_smoke/`、`tmp_smoke/`、临时日志、临时输出、本地测试目录或业务测试报告残留。
 - 如果只能生成 L1/L2，必须在交付说明中列出不能直接运行的原因。
 
 ## 禁止事项
