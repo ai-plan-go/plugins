@@ -90,8 +90,8 @@ OPTIONAL_CONTRACT_FILES = [
 SHOWSTART_POSTROCK_RUBRIC = [
     ("pdca", 10, ["Plan", "Do", "Check", "Act", "输入", "动作", "产物", "异常处理"]),
     ("plugin_install", 12, [".codex-plugin", "plugin.json", "skills/", "安装", "重装", "缓存"]),
-    ("business_core", 14, ["秀动|showstart", "演出", "艺人", "后摇|post-rock|post rock", "候选|candidate"]),
-    ("crawler_framework", 12, ["URL|url", "timeout", "diagnostic|诊断", "selector|选择器", "evidence|证据"]),
+    ("business_core", 14, ["秀动|showstart", "列表|list", "多条|multiple", "演出", "艺人", "后摇|post-rock|post rock", "候选|candidate"]),
+    ("crawler_framework", 12, ["https://www.showstart.com/", "max_items", "dedup|去重", "detail_limit", "timeout", "diagnostic|诊断", "selector|选择器", "evidence|证据"]),
     ("classification_expectation", 12, ["样例|sample", "期望|expected", "confidence|置信", "evidence|证据", "sync_plan|同步"]),
     ("runtime_entry", 10, ["run_daily_check.ps1", "Python", "$Python|-Python", "dry-run", "退出码|exit code"]),
     ("contract_consistency", 10, ["check-rules", "output-schema", "required_outputs", "deployment-contract"]),
@@ -390,6 +390,16 @@ def run_use_case_test(skill_dir: Path) -> dict:
                 "priority": "P1",
                 "type": "weak_network_diagnostics",
                 "detail": "crawler diagnostics should distinguish permission, timeout, http, captcha/login, and selector failures; missing: " + ", ".join(missing_diagnostics),
+            })
+    if re.search(r"showstart|秀动|post-rock|post rock|后摇", text, re.I):
+        showstart_blob = "\n".join([run_task, business_profile, business_test, deployment_contract, do_run_plan, skill_md])
+        required_list_terms = ["https://www.showstart.com/", "max_items", "dedup|去重", "detail_limit", "list_position|列表顺序", "card_evidence|卡片证据"]
+        missing_list_terms = [term for term in required_list_terms if not any(part.lower() in showstart_blob.lower() for part in term.split("|"))]
+        if missing_list_terms:
+            issues.append({
+                "priority": "P1",
+                "type": "showstart_list_batch_collection_missing",
+                "detail": "ShowStart regression requires homepage list batch collection; missing: " + ", ".join(missing_list_terms),
             })
     if run_task:
         if not do_run_plan:

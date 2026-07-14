@@ -84,6 +84,7 @@ Generated skills use four maturity levels:
 
 | Version | Main change |
 |---|---|
+| 0.2.14 | Updated the ShowStart regression to require multi-record homepage list collection, deduplication, bounded detail enrichment, and batch sync-plan checks. |
 | 0.2.13 | Added four-period lifecycle isolation for creator evolution, skill generation, runtime checks, and evidence-based review proposals. |
 | 0.2.12 | Added post-install verification, configurable Python runtime entrypoints, sample-based crawler classification tests, detailed network diagnostics, a ShowStart post-rock regression case, and stricter delivery cleanup. |
 | 0.2.11 | Clarified that README files are human-facing promotion and usage guides, while SKILL.md is the AI-facing source for workflow control and templates. |
@@ -147,7 +148,7 @@ The simplest way is to add this repository as a Codex plugin marketplace.
 - Marketplace: `ai-plan-go`
 - Published repository: <https://github.com/ai-plan-go/plugins>
 - Git URL: `https://github.com/ai-plan-go/plugins.git`
-- Current version: `0.2.13`
+- Current version: `0.2.14`
 
 Future sessions should use this section, `marketplace.json`, and `plugins/pdca-skill-creator/.codex-plugin/plugin.json` to quickly identify the published plugin.
 
@@ -233,7 +234,7 @@ The goal is not to make AI think harder every time. The goal is to make repeatab
 
 ## Version
 
-Current creator version: `0.2.13`
+Current creator version: `0.2.14`
 
 Source repository: <https://github.com/ai-plan-go/plugins.git>
 

@@ -281,6 +281,7 @@ P2 问题：
 - 登录、验证码、代理或风控未知时，输出 `blocked_by_login`、`captcha_detected`、`proxy_required` 等诊断，并保留可运行的访问、截图和失败证据链路。
 - 采集失败诊断必须尽量细分为 `network_permission_denied`、`timeout`、`http_error`、`captcha_or_login`、`selector_miss`、`proxy_required` 或 `unknown_collection_error`，并给出可复跑建议。
 - 对用户要求的每个核心字段，生成字段提取矩阵，标注提取策略、选择器或 fallback、证据路径和未知项。
+- 如果用户指定列表页、搜索页、频道页或多条/批量采集，Do 脚本必须先采集列表记录，再按可配置的 `max_items`、去重键和详情访问上限处理多条项目；不得用一个固定详情页替代列表采集。结果必须报告原始数量、去重后数量、逐条字段质量、跳过原因和列表证据。
 
 如果真实采集框架没有生成，当前成熟度最高只能是 `L2 规则型`。如果采集框架存在但字段选择器待确认，最高只能是 `L3 可执行脚手架`。
 
