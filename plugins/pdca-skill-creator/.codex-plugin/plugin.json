@@ -1,7 +1,7 @@
 {
   "name": "pdca-skill-creator",
-  "version": "0.2.12",
-  "description": "Create PDCA-based Codex skills with install verification, configurable Python runtime entrypoints, sample-based crawler smoke tests, network diagnostics, two-layer scoring, business-core-first execution, evidence-backed maturity grading, contract-consistent checks, clean packaging, logs, and reports.",
+  "version": "0.2.13",
+  "description": "Create PDCA-based Codex skills with lifecycle-isolated creator evolution, business-skill generation, runtime checks, evidence-based review proposals, install verification, quality gates, and clean packaging.",
   "author": {
     "name": "ai-plan-go",
     "url": "https://github.com/ai-plan-go"
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "PDCA Skill Creator",
     "shortDescription": "Create self-checking PDCA Codex skills",
-    "longDescription": "Create Codex skills that follow a PDCA loop with Plan, Do, Check, and Act stages while preserving the business core first. It requires a Do-script run plan document for executable skills, a step-by-step confirmation table for automation skills, and install verification for Codex plugins. Generated Windows scheduler entrypoints accept an explicit Python runtime, while crawler and classifier smoke tests validate sample business outcomes instead of only checking file existence. Collection failures are categorized across network permissions, timeouts, HTTP errors, login or captcha blocks, selector misses, proxy requirements, and unknown errors. The creator also generates core implementation plans, selector and field extraction matrices, evidence-backed maturity grading, capability matrices, layered self-optimization evaluation, generic quality gates, business-specific use case tests, contract-consistent checks, clean plugin directories, logs, health diagnosis, historical requirements, and iterative creator regression reports.",
+    "longDescription": "Create Codex skills that follow a PDCA loop with Plan, Do, Check, and Act stages while preserving the business core first. Work is isolated into four periods: creator evolution, business-skill generation, runtime and checking, and evidence-based review. Runtime writes stay in work directories; review produces scoped change proposals; only anonymized, reproducible feedback can return to creator evolution through regression tests. The creator also requires confirmation tables, Do-script plans, install verification, configurable Python entrypoints, sample-based crawler checks, network diagnostics, maturity grading, contract-consistent checks, and clean plugin directories.",
     "developerName": "ai-plan-go",
     "category": "Productivity",
     "capabilities": [

@@ -19,11 +19,12 @@ RUBRIC = [
     ("source_and_maturity", 12, ["pdca-skill-creator", "创建器版本|creator version", "目标成熟度|target maturity", "当前成熟度|current maturity", "L1|L2|L3|L4", "占位|待确认|placeholder|pending"]),
     ("business_core", 10, ["业务核心|business core", "核心动作|core action", "实现矩阵|implementation matrix", "证据|evidence", "缺口|gap"]),
     ("capability_matrix", 10, ["能力矩阵|capability matrix", "已实现|implemented", "占位|placeholder", "待确认|pending", "证据|evidence"]),
-    ("executable_scaffold", 14, ["init_project.py", "run_task.py", "check_outputs.py", "smoke_test.py", "退出码|exit code", "日志|log", "结构化|structured"]),
-    ("contract_consistency", 14, ["check-rules", "output-schema", "required_outputs", "outputs", "deployment-contract", "schema", "规则|rule"]),
+    ("executable_scaffold", 12, ["init_project.py", "run_task.py", "check_outputs.py", "smoke_test.py", "退出码|exit code", "日志|log", "结构化|structured"]),
+    ("contract_consistency", 12, ["check-rules", "output-schema", "required_outputs", "outputs", "deployment-contract", "schema", "规则|rule"]),
     ("evidence_and_logs", 10, ["证据|evidence", "日志|log", "diagnostic|诊断", "P0", "P1", "P2"]),
-    ("self_optimization", 10, ["自我优化|self-optimization", "自我进化|self-evolution", "复测|retest|re-test", "plan-history", "Act"]),
-    ("clean_packaging", 8, ["__pycache__", "work_smoke", "临时|temporary", "打包|package"]),
+    ("lifecycle_isolation", 8, ["生命周期|lifecycle", "时期 0|period 0", "时期 1|period 1", "时期 2|period 2", "时期 3|period 3", "lifecycle-contract", "run_id", "改动提案|change proposal"]),
+    ("self_optimization", 8, ["自我优化|self-optimization", "自我进化|self-evolution", "复测|retest|re-test", "plan-history", "Act"]),
+    ("clean_packaging", 6, ["__pycache__", "work_smoke", "临时|temporary", "打包|package"]),
 ]
 
 
@@ -35,6 +36,7 @@ REQUIRED_FILES = [
     "scripts/check_outputs.py",
     "scripts/smoke_test.py",
     "references/deployment-contract.md",
+    "references/lifecycle-contract.md",
     "references/plan-history.md",
 ]
 
@@ -152,6 +154,7 @@ def run_quality_gate(candidate_dir: Path) -> dict:
     deployment_contract = read_text(skill_dir / "references" / "deployment-contract.md")
     business_profile = read_text(skill_dir / "references" / "business-use-case-profile.json")
     business_test = read_text(skill_dir / "scripts" / "run_business_use_case_test.py")
+    lifecycle_contract = read_text(skill_dir / "references" / "lifecycle-contract.md")
 
     if any((skill_dir / "references" / name).exists() for name in ["check-rules.yaml", "check-rules.yml", "check-rules.json"]) and not script_mentions(check_outputs, "check-rules"):
         issues.append({"priority": "P1", "type": "check_rules_not_consumed", "detail": "check_outputs.py should read references/check-rules.yaml"})
@@ -161,6 +164,12 @@ def run_quality_gate(candidate_dir: Path) -> dict:
         issues.append({"priority": "P1", "type": "selectors_not_consumed", "detail": "run_task.py should read references/selectors.yaml"})
     if smoke_test and not re.search(r"init_project|run_task|check_outputs", smoke_test, re.I):
         issues.append({"priority": "P1", "type": "weak_smoke_test", "detail": "smoke_test.py should exercise init/run/check chain"})
+    lifecycle_required = ["时期 0|period 0", "时期 1|period 1", "时期 2|period 2", "时期 3|period 3", "run_id", "outputs", "改动提案|change proposal", "创建器反馈|creator feedback"]
+    lifecycle_missing = [item for item in lifecycle_required if not any(part.lower() in lifecycle_contract.lower() for part in item.split("|"))]
+    if lifecycle_missing:
+        issues.append({"priority": "P1", "type": "incomplete_lifecycle_contract", "detail": "lifecycle-contract.md missing: " + ", ".join(lifecycle_missing)})
+    if run_task and re.search(r"(?:skill_dir|skill_root|__file__).{0,80}(?:write_text|open\s*\()", run_task, re.I | re.S):
+        issues.append({"priority": "P1", "type": "runtime_writes_skill_source", "detail": "run_task.py appears to write runtime evidence under the skill source; use the configured work/output directory"})
     if run_daily and re.search(r"^\s*python\s+", run_daily, re.I | re.M) and not re.search(r"\$Python|param\s*\([^)]*Python", run_daily, re.I | re.S):
         issues.append({"priority": "P1", "type": "run_daily_hardcodes_python", "detail": "run_daily_check.ps1 should accept a configurable Python path"})
     if candidate_type == "plugin":

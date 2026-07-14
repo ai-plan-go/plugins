@@ -14,7 +14,7 @@ If this README conflicts with `skills/pdca-skill-creator/SKILL.md`, the skill fi
 
 ## Version
 
-- Current version: `0.2.12`
+- Current version: `0.2.13`
 - Manifest: `.codex-plugin/plugin.json`
 - Skill entry: `skills/pdca-skill-creator/SKILL.md`
 
@@ -23,6 +23,8 @@ If this README conflicts with `skills/pdca-skill-creator/SKILL.md`, the skill fi
 `pdca-skill-creator` creates or upgrades PDCA-based Codex skills for recurring workflows, inspections, monitors, reports, crawler tasks, and operational processes.
 
 The current package requires generated executable skills to include:
+
+- Four isolated lifecycle periods for creator evolution, business-skill generation, runtime checking, and evidence-based review. Runtime output is separated from skill source; reviews produce scoped proposals before implementation.
 
 - A step-by-step confirmation table for automation-style tasks.
 - A Do-script run plan document at `references/do-run-plan.md`.

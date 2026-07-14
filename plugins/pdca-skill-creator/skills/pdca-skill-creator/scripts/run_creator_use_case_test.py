@@ -37,6 +37,7 @@ REQUIRED_FILES = [
     "scripts/run_daily_check.ps1",
     "references/deployment-contract.md",
     "references/do-run-plan.md",
+    "references/lifecycle-contract.md",
     "references/plan-history.md",
 ]
 
@@ -318,6 +319,7 @@ def run_use_case_test(skill_dir: Path) -> dict:
     deployment_contract = read_text(skill_dir / "references" / "deployment-contract.md")
     do_run_plan = read_text(skill_dir / "references" / "do-run-plan.md")
     skill_md = read_text(skill_dir / "SKILL.md")
+    lifecycle_contract = read_text(skill_dir / "references" / "lifecycle-contract.md")
 
     if run_task and not re.search(r"playwright|async_playwright|sync_playwright|urlopen|requests\.|httpx|aiohttp", run_task, re.I):
         issues.append({"priority": "P1", "type": "crawler_framework_missing", "detail": "run_task.py should include a real page collection path such as Playwright or an HTTP client plus diagnostics"})
@@ -404,6 +406,21 @@ def run_use_case_test(skill_dir: Path) -> dict:
                     "type": "incomplete_do_run_plan",
                     "detail": "missing do-run-plan sections: " + ", ".join(missing_do_plan),
                 })
+
+    lifecycle_required = ["时期 0|period 0", "时期 1|period 1", "时期 2|period 2", "时期 3|period 3", "run_id", "outputs", "改动提案|change proposal", "创建器反馈|creator feedback"]
+    lifecycle_missing = [item for item in lifecycle_required if not any(part.lower() in lifecycle_contract.lower() for part in item.split("|"))]
+    if lifecycle_missing:
+        issues.append({
+            "priority": "P1",
+            "type": "incomplete_lifecycle_contract",
+            "detail": "lifecycle-contract.md missing: " + ", ".join(lifecycle_missing),
+        })
+    if run_task and re.search(r"(?:skill_dir|skill_root|__file__).{0,80}(?:write_text|open\s*\()", run_task, re.I | re.S):
+        issues.append({
+            "priority": "P1",
+            "type": "runtime_writes_skill_source",
+            "detail": "run_task.py appears to write runtime evidence under the skill source; use the configured work/output directory",
+        })
 
     confirmation_missing = [
         keyword for keyword in REQUIRED_CONFIRMATION_KEYWORDS
