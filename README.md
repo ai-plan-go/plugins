@@ -84,6 +84,7 @@ Generated skills use four maturity levels:
 
 | Version | Main change |
 |---|---|
+| 0.2.18 | Added creator-wrapper gating so business requests passed to the creator are first converted into skill-creation goals before any runtime execution. |
 | 0.2.17 | Added hard stage gates for creator period separation, mandatory progress reporting, and aligned published package versions for the release. |
 | 0.2.16 | Required script-only business data generation and a source-processing-result run manifest for executable skills. |
 | 0.2.15 | Made the whole requirements table a mandatory user-confirmed gate; added crawler scope, probe field mapping, and script-vs-AI automation analysis. |
@@ -151,7 +152,7 @@ The simplest way is to add this repository as a Codex plugin marketplace.
 - Marketplace: `ai-plan-go`
 - Published repository: <https://github.com/ai-plan-go/plugins>
 - Git URL: `https://github.com/ai-plan-go/plugins.git`
-- Current version: `0.2.17`
+- Current version: `0.2.18`
 
 Future sessions should use this section, `marketplace.json`, and `plugins/pdca-skill-creator/.codex-plugin/plugin.json` to quickly identify the published plugin.
 
@@ -237,7 +238,7 @@ The goal is not to make AI think harder every time. The goal is to make repeatab
 
 ## Version
 
-Current creator version: `0.2.17`
+Current creator version: `0.2.18`
 
 Source repository: <https://github.com/ai-plan-go/plugins.git>
 
