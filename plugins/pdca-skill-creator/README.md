@@ -14,7 +14,7 @@ If this README conflicts with `skills/pdca-skill-creator/SKILL.md`, the skill fi
 
 ## Version
 
-- Current version: `0.2.16`
+- Current version: `0.2.17`
 - Manifest: `.codex-plugin/plugin.json`
 - Skill entry: `skills/pdca-skill-creator/SKILL.md`
 

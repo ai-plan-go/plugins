@@ -1,6 +1,6 @@
 {
   "name": "pdca-skill-creator",
-  "version": "0.2.16",
+  "version": "0.2.17",
   "description": "Create PDCA-based Codex skills with script-only business data generation, source-processing-result manifests, mandatory confirmation, quality gates, and clean packaging.",
   "author": {
     "name": "ai-plan-go",
