@@ -1,7 +1,7 @@
 {
   "name": "pdca-skill-creator",
-  "version": "0.2.14",
-  "description": "Create PDCA-based Codex skills with lifecycle isolation, list-page batch crawler requirements, evidence-based review proposals, install verification, quality gates, and clean packaging.",
+  "version": "0.2.15",
+  "description": "Create PDCA-based Codex skills with mandatory whole-table confirmation, crawler scope and field-mapping probes, automation-boundary analysis, quality gates, and clean packaging.",
   "author": {
     "name": "ai-plan-go",
     "url": "https://github.com/ai-plan-go"
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "PDCA Skill Creator",
     "shortDescription": "Create self-checking PDCA Codex skills",
-    "longDescription": "Create Codex skills that follow a PDCA loop with Plan, Do, Check, and Act stages while preserving the business core first. Work is isolated into four periods: creator evolution, business-skill generation, runtime and checking, and evidence-based review. Runtime writes stay in work directories; review produces scoped change proposals; only anonymized, reproducible feedback can return to creator evolution through regression tests. List-page and batch crawlers must collect configurable multiple records with deduplication and bounded detail-page enrichment, rather than reducing the workflow to one fixed detail URL. The creator also requires confirmation tables, Do-script plans, install verification, configurable Python entrypoints, sample-based crawler checks, network diagnostics, maturity grading, contract-consistent checks, and clean plugin directories.",
+    "longDescription": "Create Codex skills that follow a PDCA loop with Plan, Do, Check, and Act stages while preserving the business core first. Work is isolated into four periods: creator evolution, business-skill generation, runtime and checking, and evidence-based review. Before a business skill can be generated, users must confirm one complete requirements table. Crawler requests additionally confirm collection scope, pagination, detail-page behavior, and a probe-based page-to-output field mapping. Every workflow classifies actions as script-fixed, AI decision points, or user confirmation, with deterministic automation preferred. The creator also requires Do-script plans, install verification, configurable Python entrypoints, sample-based crawler checks, network diagnostics, maturity grading, contract-consistent checks, and clean plugin directories.",
     "developerName": "ai-plan-go",
     "category": "Productivity",
     "capabilities": [

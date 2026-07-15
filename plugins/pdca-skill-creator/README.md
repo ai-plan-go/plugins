@@ -14,7 +14,7 @@ If this README conflicts with `skills/pdca-skill-creator/SKILL.md`, the skill fi
 
 ## Version
 
-- Current version: `0.2.14`
+- Current version: `0.2.15`
 - Manifest: `.codex-plugin/plugin.json`
 - Skill entry: `skills/pdca-skill-creator/SKILL.md`
 
@@ -26,6 +26,7 @@ The current package requires generated executable skills to include:
 
 - Four isolated lifecycle periods for creator evolution, business-skill generation, runtime checking, and evidence-based review. Runtime output is separated from skill source; reviews produce scoped proposals before implementation.
 - List-page and batch crawler skills collect configurable multiple records, deduplicate them, preserve per-record evidence, and bound detail-page enrichment instead of relying on one fixed detail URL.
+- Business skills start only after the user confirms one complete requirements table. Crawler requests include collection scope and a probe-based field-mapping review; workflows distinguish script-fixed work, AI decisions, and user confirmations.
 
 - A step-by-step confirmation table for automation-style tasks.
 - A Do-script run plan document at `references/do-run-plan.md`.

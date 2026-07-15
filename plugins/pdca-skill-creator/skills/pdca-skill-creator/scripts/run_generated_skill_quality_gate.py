@@ -41,6 +41,29 @@ REQUIRED_FILES = [
 ]
 
 
+CONFIRMATION_KEYWORDS = [
+    "整体需求确认表",
+    "整体确认",
+    "业务自动化分析",
+    "脚本固化",
+    "AI 决策点",
+]
+
+
+CRAWLER_CONFIRMATION_KEYWORDS = [
+    "爬虫抓取范围",
+    "筛选条件",
+    "详情页",
+    "分页",
+    "试抓",
+    "字段映射",
+    "页面信息",
+    "输出字段",
+    "转换规则",
+    "缺失处理",
+]
+
+
 def read_text(path: Path) -> str:
     try:
         return path.read_text(encoding="utf-8")
@@ -164,6 +187,10 @@ def run_quality_gate(candidate_dir: Path) -> dict:
         issues.append({"priority": "P1", "type": "selectors_not_consumed", "detail": "run_task.py should read references/selectors.yaml"})
     if smoke_test and not re.search(r"init_project|run_task|check_outputs", smoke_test, re.I):
         issues.append({"priority": "P1", "type": "weak_smoke_test", "detail": "smoke_test.py should exercise init/run/check chain"})
+    confirmation_blob = deployment_contract + "\n" + text
+    missing_confirmation = [keyword for keyword in CONFIRMATION_KEYWORDS if keyword.lower() not in confirmation_blob.lower()]
+    if missing_confirmation:
+        issues.append({"priority": "P1", "type": "incomplete_preflight_confirmation", "detail": "missing overall confirmation fields: " + ", ".join(missing_confirmation)})
     lifecycle_required = ["时期 0|period 0", "时期 1|period 1", "时期 2|period 2", "时期 3|period 3", "run_id", "outputs", "改动提案|change proposal", "创建器反馈|creator feedback"]
     lifecycle_missing = [item for item in lifecycle_required if not any(part.lower() in lifecycle_contract.lower() for part in item.split("|"))]
     if lifecycle_missing:
@@ -184,6 +211,9 @@ def run_quality_gate(candidate_dir: Path) -> dict:
             issues.append({"priority": "P1", "type": "weak_network_diagnostics", "detail": "crawler diagnostics should distinguish common failure causes; missing: " + ", ".join(missing_diag)})
         if not re.search(r"sample|expected|样例|期望|candidate|候选", business_profile + business_test + smoke_test, re.I):
             issues.append({"priority": "P1", "type": "missing_business_sample_expectation", "detail": "crawler/classification tests should include sample expected key fields and classification outcome"})
+        missing_crawler_confirmation = [keyword for keyword in CRAWLER_CONFIRMATION_KEYWORDS if keyword.lower() not in confirmation_blob.lower()]
+        if missing_crawler_confirmation:
+            issues.append({"priority": "P1", "type": "incomplete_crawler_confirmation_contract", "detail": "crawler confirmation is missing: " + ", ".join(missing_crawler_confirmation)})
     if maturity_overclaim(text):
         issues.append({"priority": "P1", "type": "possible_maturity_overclaim", "detail": "current maturity appears to claim L4 while placeholder markers exist"})
     if not re.search(r"自我优化|self[- ]?optimization", text, re.I) or not re.search(r"复测|retest|re-test", text, re.I):

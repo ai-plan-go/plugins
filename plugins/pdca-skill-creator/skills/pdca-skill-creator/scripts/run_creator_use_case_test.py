@@ -42,16 +42,39 @@ REQUIRED_FILES = [
 ]
 
 REQUIRED_CONFIRMATION_KEYWORDS = [
-    "步骤检查确认表",
+    "整体需求确认表",
     "步骤",
     "参数类别",
     "数据来源",
+    "爬虫抓取范围",
+    "字段映射试抓",
+    "业务自动化分析",
+    "脚本固化",
+    "AI 决策点",
     "输出格式",
     "触发方案",
     "运行参数",
     "确认状态",
     "未确认风险",
     "处理动作",
+    "整体确认",
+]
+
+
+CRAWLER_CONFIRMATION_KEYWORDS = [
+    "列表页|搜索页|频道页",
+    "筛选条件",
+    "详情页",
+    "分页",
+    "每页大小|page_size",
+    "最大页数|max_pages|max_items",
+    "试抓",
+    "字段映射",
+    "页面信息",
+    "输出字段",
+    "选择器|selector",
+    "转换规则",
+    "缺失处理",
 ]
 
 CODEX_AUTOMATION_KEYWORDS = [
@@ -442,6 +465,20 @@ def run_use_case_test(skill_dir: Path) -> dict:
             "type": "missing_preflight_confirmation_contract",
             "detail": "missing confirmation fields: " + ", ".join(confirmation_missing),
         })
+
+    if re.search(r"爬|crawl|crawler|采集|抓取|showstart|网页|页面", text, re.I):
+        confirmation_blob = deployment_contract + "\n" + skill_md + "\n" + business_profile
+        crawler_confirmation_missing = [
+            keyword
+            for keyword in CRAWLER_CONFIRMATION_KEYWORDS
+            if not any(part.lower() in confirmation_blob.lower() for part in keyword.split("|"))
+        ]
+        if crawler_confirmation_missing:
+            issues.append({
+                "priority": "P1",
+                "type": "incomplete_crawler_confirmation_contract",
+                "detail": "crawler confirmation is missing: " + ", ".join(crawler_confirmation_missing),
+            })
 
     automation_context = re.search(r"每日|定时|自动|安排任务|监控|周期", text, re.I)
     if automation_context and not any(keyword.lower() in text.lower() for keyword in CODEX_AUTOMATION_KEYWORDS):
