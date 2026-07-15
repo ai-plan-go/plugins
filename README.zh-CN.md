@@ -84,6 +84,7 @@
 
 | 版本 | 主要变化 |
 |---|---|
+| 0.2.16 | 业务数据仅允许脚本生成，新增来源-处理-结果运行清单与基线/同步阻断校验。 |
 | 0.2.15 | 确认表升级为必须整体确认的预检门，新增爬虫范围、试抓字段映射和脚本与 AI 决策分析。 |
 | 0.2.14 | ShowStart 回归改为首页列表多条采集、去重、详情补充上限和批量同步计划检查。 |
 | 0.2.13 | 新增时期 0-3 生命周期隔离，分开创建器迭代、业务技能生成、运行检查和基于证据的复盘提案。 |
@@ -148,7 +149,7 @@ pdca-skill-creator/
 - 插件市场：`ai-plan-go`
 - 发布仓库：<https://github.com/ai-plan-go/plugins>
 - Git 地址：`https://github.com/ai-plan-go/plugins.git`
-- 当前版本：`0.2.15`
+- 当前版本：`0.2.16`
 
 后续其他会话需要识别本插件时，优先查看本节、`marketplace.json` 和 `plugins/pdca-skill-creator/.codex-plugin/plugin.json`。
 
@@ -234,7 +235,7 @@ cp -R plugins/pdca-skill-creator/skills/pdca-skill-creator ~/.codex/skills/
 
 ## 版本
 
-当前创建器版本：`0.2.15`
+当前创建器版本：`0.2.16`
 
 来源仓库：<https://github.com/ai-plan-go/plugins.git>
 

@@ -36,6 +36,7 @@ REQUIRED_FILES = [
     "scripts/smoke_test.py",
     "scripts/run_daily_check.ps1",
     "references/deployment-contract.md",
+    "references/data-provenance-contract.md",
     "references/do-run-plan.md",
     "references/lifecycle-contract.md",
     "references/plan-history.md",
@@ -75,6 +76,21 @@ CRAWLER_CONFIRMATION_KEYWORDS = [
     "选择器|selector",
     "转换规则",
     "缺失处理",
+]
+
+
+DATA_PROVENANCE_KEYWORDS = [
+    "AI 不得|AI must not|AI cannot",
+    "脚本|script",
+    "run-manifest|run_manifest|运行清单",
+    "数据来源|data source",
+    "处理流程|processing",
+    "处理结果|result",
+    "脚本版本|script version|脚本哈希|script hash",
+    "文件哈希|file hash",
+    "记录数|record count",
+    "证据路径|evidence path",
+    "退出码|exit code",
 ]
 
 CODEX_AUTOMATION_KEYWORDS = [
@@ -340,6 +356,7 @@ def run_use_case_test(skill_dir: Path) -> dict:
     business_profile = read_text(skill_dir / "references" / "business-use-case-profile.json")
     business_test = read_text(skill_dir / "scripts" / "run_business_use_case_test.py")
     deployment_contract = read_text(skill_dir / "references" / "deployment-contract.md")
+    data_provenance_contract = read_text(skill_dir / "references" / "data-provenance-contract.md")
     do_run_plan = read_text(skill_dir / "references" / "do-run-plan.md")
     skill_md = read_text(skill_dir / "SKILL.md")
     lifecycle_contract = read_text(skill_dir / "references" / "lifecycle-contract.md")
@@ -357,6 +374,13 @@ def run_use_case_test(skill_dir: Path) -> dict:
             issues.append({"priority": "P1", "type": "schema_not_consumed", "detail": "check_outputs.py does not read output-schema"})
     if smoke_test and not re.search(r"check_outputs|run_task|init_project", smoke_test, re.I):
         issues.append({"priority": "P1", "type": "weak_smoke_test", "detail": "smoke_test.py does not exercise init/run/check chain"})
+    missing_provenance = [keyword for keyword in DATA_PROVENANCE_KEYWORDS if not any(part.lower() in data_provenance_contract.lower() for part in keyword.split("|"))]
+    if missing_provenance:
+        issues.append({"priority": "P1", "type": "incomplete_data_provenance_contract", "detail": "data-provenance-contract.md missing: " + ", ".join(missing_provenance)})
+    if run_task and not re.search(r"data-provenance|run[_-]manifest|运行清单", run_task, re.I):
+        issues.append({"priority": "P1", "type": "run_manifest_not_generated", "detail": "run_task.py should write a data provenance run-manifest in the work/output directory"})
+    if check_outputs and not re.search(r"data-provenance|run[_-]manifest|运行清单", check_outputs, re.I):
+        issues.append({"priority": "P1", "type": "run_manifest_not_checked", "detail": "check_outputs.py should validate the data provenance run-manifest"})
     smoke_writes_runtime_under_source = bool(
         re.search(
             r"(?:skill_dir|skill_root)\s*/\s*[\"'](?:tmp_smoke|work_smoke|outputs?)[\"']",

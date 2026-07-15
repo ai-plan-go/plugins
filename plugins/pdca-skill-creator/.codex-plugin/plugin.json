@@ -1,7 +1,7 @@
 {
   "name": "pdca-skill-creator",
-  "version": "0.2.15",
-  "description": "Create PDCA-based Codex skills with mandatory whole-table confirmation, crawler scope and field-mapping probes, automation-boundary analysis, quality gates, and clean packaging.",
+  "version": "0.2.16",
+  "description": "Create PDCA-based Codex skills with script-only business data generation, source-processing-result manifests, mandatory confirmation, quality gates, and clean packaging.",
   "author": {
     "name": "ai-plan-go",
     "url": "https://github.com/ai-plan-go"
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "PDCA Skill Creator",
     "shortDescription": "Create self-checking PDCA Codex skills",
-    "longDescription": "Create Codex skills that follow a PDCA loop with Plan, Do, Check, and Act stages while preserving the business core first. Work is isolated into four periods: creator evolution, business-skill generation, runtime and checking, and evidence-based review. Before a business skill can be generated, users must confirm one complete requirements table. Crawler requests additionally confirm collection scope, pagination, detail-page behavior, and a probe-based page-to-output field mapping. Every workflow classifies actions as script-fixed, AI decision points, or user confirmation, with deterministic automation preferred. The creator also requires Do-script plans, install verification, configurable Python entrypoints, sample-based crawler checks, network diagnostics, maturity grading, contract-consistent checks, and clean plugin directories.",
+    "longDescription": "Create Codex skills that follow a PDCA loop with Plan, Do, Check, and Act stages while preserving the business core first. Work is isolated into four periods: creator evolution, business-skill generation, runtime and checking, and evidence-based review. Before a business skill can be generated, users must confirm one complete requirements table. Business data, run logs, check results, and report values can be written only by scripts or deterministic tools, never by AI prose. Each L3/L4 run emits a source-processing-result manifest with script version, hashes, record counts, evidence paths, and exit status; checks block baseline updates or external sync when provenance is incomplete. The creator also requires Do-script plans, install verification, configurable Python entrypoints, sample-based crawler checks, network diagnostics, maturity grading, contract-consistent checks, and clean plugin directories.",
     "developerName": "ai-plan-go",
     "category": "Productivity",
     "capabilities": [
