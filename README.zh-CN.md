@@ -84,6 +84,7 @@
 
 | 版本 | 主要变化 |
 |---|---|
+| 0.2.20 | 将 `script-design.md` 和 `ai-decision-checklist.md` 升级为 L3/L4 技能强制产物，新增质量门禁校验，并修复发布文档版本不同步问题。 |
 | 0.2.19 | 新增执行术语消歧门禁，确认完成后像“开始执行”这类回复默认仍停留在时期 1，除非用户明确授权进入运行期。 |
 | 0.2.18 | 新增创建器包装层门禁，先把传入创建器的业务需求转换为技能创建目标，再允许进入后续生成流程。 |
 | 0.2.17 | 新增创建器时期强制门禁、强制进度提示契约，并对齐发布包版本信息。 |
@@ -152,7 +153,7 @@ pdca-skill-creator/
 - 插件市场：`ai-plan-go`
 - 发布仓库：<https://github.com/ai-plan-go/plugins>
 - Git 地址：`https://github.com/ai-plan-go/plugins.git`
-- 当前版本：`0.2.18`
+- 当前版本：`0.2.20`
 
 后续其他会话需要识别本插件时，优先查看本节、`marketplace.json` 和 `plugins/pdca-skill-creator/.codex-plugin/plugin.json`。
 
@@ -238,7 +239,7 @@ cp -R plugins/pdca-skill-creator/skills/pdca-skill-creator ~/.codex/skills/
 
 ## 版本
 
-当前创建器版本：`0.2.18`
+当前创建器版本：`0.2.20`
 
 来源仓库：<https://github.com/ai-plan-go/plugins.git>
 

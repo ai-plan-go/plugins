@@ -84,6 +84,7 @@ Generated skills use four maturity levels:
 
 | Version | Main change |
 |---|---|
+| 0.2.20 | Made `script-design.md` and `ai-decision-checklist.md` mandatory L3/L4 artifacts, added creator quality-gate checks for both, and fixed version-sync drift in published docs. |
 | 0.2.19 | Added ambiguity gates so “start executing” style replies stay in period 1 by default after confirmation, unless the user explicitly authorizes runtime entry. |
 | 0.2.18 | Added creator-wrapper gating so business requests passed to the creator are first converted into skill-creation goals before any runtime execution. |
 | 0.2.17 | Added hard stage gates for creator period separation, mandatory progress reporting, and aligned published package versions for the release. |
@@ -153,7 +154,7 @@ The simplest way is to add this repository as a Codex plugin marketplace.
 - Marketplace: `ai-plan-go`
 - Published repository: <https://github.com/ai-plan-go/plugins>
 - Git URL: `https://github.com/ai-plan-go/plugins.git`
-- Current version: `0.2.18`
+- Current version: `0.2.20`
 
 Future sessions should use this section, `marketplace.json`, and `plugins/pdca-skill-creator/.codex-plugin/plugin.json` to quickly identify the published plugin.
 
@@ -239,7 +240,7 @@ The goal is not to make AI think harder every time. The goal is to make repeatab
 
 ## Version
 
-Current creator version: `0.2.18`
+Current creator version: `0.2.20`
 
 Source repository: <https://github.com/ai-plan-go/plugins.git>
 

@@ -35,6 +35,9 @@ REQUIRED_FILES = [
     "scripts/run_task.py",
     "scripts/check_outputs.py",
     "scripts/smoke_test.py",
+    "references/do-run-plan.md",
+    "references/script-design.md",
+    "references/ai-decision-checklist.md",
     "references/deployment-contract.md",
     "references/data-provenance-contract.md",
     "references/lifecycle-contract.md",
@@ -48,6 +51,28 @@ CONFIRMATION_KEYWORDS = [
     "业务自动化分析",
     "脚本固化",
     "AI 决策点",
+]
+
+
+SCRIPT_DESIGN_KEYWORDS = [
+    "脚本与职责",
+    "业务主流程",
+    "输入",
+    "输出",
+    "异常",
+    "证据",
+    "已覆盖",
+    "未覆盖",
+]
+
+
+AI_DECISION_KEYWORDS = [
+    "AI 不得自行决定",
+    "AI 允许自行完成",
+    "脚本固化",
+    "AI 决策点",
+    "用户确认",
+    "进入时期",
 ]
 
 
@@ -190,6 +215,8 @@ def run_quality_gate(candidate_dir: Path) -> dict:
     smoke_test = read_text(skill_dir / "scripts" / "smoke_test.py")
     run_daily = read_text(skill_dir / "scripts" / "run_daily_check.ps1")
     do_run_plan = read_text(skill_dir / "references" / "do-run-plan.md")
+    script_design = read_text(skill_dir / "references" / "script-design.md")
+    ai_decision_checklist = read_text(skill_dir / "references" / "ai-decision-checklist.md")
     deployment_contract = read_text(skill_dir / "references" / "deployment-contract.md")
     data_provenance_contract = read_text(skill_dir / "references" / "data-provenance-contract.md")
     business_profile = read_text(skill_dir / "references" / "business-use-case-profile.json")
@@ -219,6 +246,12 @@ def run_quality_gate(candidate_dir: Path) -> dict:
     lifecycle_missing = [item for item in lifecycle_required if not any(part.lower() in lifecycle_contract.lower() for part in item.split("|"))]
     if lifecycle_missing:
         issues.append({"priority": "P1", "type": "incomplete_lifecycle_contract", "detail": "lifecycle-contract.md missing: " + ", ".join(lifecycle_missing)})
+    missing_script_design = [keyword for keyword in SCRIPT_DESIGN_KEYWORDS if keyword.lower() not in script_design.lower()]
+    if missing_script_design:
+        issues.append({"priority": "P1", "type": "incomplete_script_design_doc", "detail": "script-design.md missing: " + ", ".join(missing_script_design)})
+    missing_ai_decision = [keyword for keyword in AI_DECISION_KEYWORDS if keyword.lower() not in ai_decision_checklist.lower()]
+    if missing_ai_decision:
+        issues.append({"priority": "P1", "type": "incomplete_ai_decision_checklist", "detail": "ai-decision-checklist.md missing: " + ", ".join(missing_ai_decision)})
     if run_task and re.search(r"(?:skill_dir|skill_root|__file__).{0,80}(?:write_text|open\s*\()", run_task, re.I | re.S):
         issues.append({"priority": "P1", "type": "runtime_writes_skill_source", "detail": "run_task.py appears to write runtime evidence under the skill source; use the configured work/output directory"})
     if run_daily and re.search(r"^\s*python\s+", run_daily, re.I | re.M) and not re.search(r"\$Python|param\s*\([^)]*Python", run_daily, re.I | re.S):

@@ -14,7 +14,7 @@ If this README conflicts with `skills/pdca-skill-creator/SKILL.md`, the skill fi
 
 ## Version
 
-- Current version: `0.2.19`
+- Current version: `0.2.20`
 - Manifest: `.codex-plugin/plugin.json`
 - Skill entry: `skills/pdca-skill-creator/SKILL.md`
 
@@ -31,6 +31,8 @@ The current package requires generated executable skills to include:
 
 - A step-by-step confirmation table for automation-style tasks.
 - A Do-script run plan document at `references/do-run-plan.md`.
+- A script business-flow design document at `references/script-design.md`.
+- An AI decision boundary checklist at `references/ai-decision-checklist.md`.
 - Install, reinstall, installed-cache synchronization, structure validation, and a post-install dry run for generated plugins.
 - Configurable Python runtime parameters for Windows scheduler entry points.
 - Sample-based crawler and classifier checks that validate real fields, evidence, and expected candidate results.
