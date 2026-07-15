@@ -84,6 +84,7 @@ Generated skills use four maturity levels:
 
 | Version | Main change |
 |---|---|
+| 0.2.19 | Added ambiguity gates so “start executing” style replies stay in period 1 by default after confirmation, unless the user explicitly authorizes runtime entry. |
 | 0.2.18 | Added creator-wrapper gating so business requests passed to the creator are first converted into skill-creation goals before any runtime execution. |
 | 0.2.17 | Added hard stage gates for creator period separation, mandatory progress reporting, and aligned published package versions for the release. |
 | 0.2.16 | Required script-only business data generation and a source-processing-result run manifest for executable skills. |
