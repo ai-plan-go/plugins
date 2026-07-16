@@ -80,10 +80,118 @@ Generated skills use four maturity levels:
 - Excludes `__pycache__/`, `*.pyc`, `work_smoke/`, `tmp_smoke/`, business test reports, temporary logs, and local test outputs from final deliverables.
 - Supports testing either plain skill folders or installable plugin roots.
 
+## Operating Controls
+
+This section is the human-facing map of the creator's runtime controls. `SKILL.md` and the referenced contracts remain authoritative; this guide makes their boundaries, evidence, and handoffs visible before a workflow is created or run.
+
+### Four-Period Lifecycle
+
+```mermaid
+flowchart LR
+    P0["Period 0\nCreator evolution"] -->|"release passes regression"| P1["Period 1\nBusiness-skill generation"]
+    P1 -->|"skill exists + requirements confirmed + explicit runtime authorization"| P2["Period 2\nDo and Check runtime"]
+    P2 -->|"run manifest + check result + evidence"| P3["Period 3\nEvidence-based review"]
+    P3 -->|"approved skill change proposal"| P1
+    P3 -->|"anonymized, reusable creator feedback"| P0
+```
+
+| Period | Subject and permitted work | Required evidence | Hard boundary | Exit condition |
+|---|---|---|---|---|
+| 0 | Improve the creator itself: rules, templates, gates, regression cases, version, and release package. | Change record, regression result, release synchronization. | Do not create or invent business runtime data. | Creator regression passes and release files are synchronized. |
+| 1 | Create or upgrade a business skill: clarify requirements, define contracts, generate scaffolding, and establish tests. | Creator wrapper, confirmation table, lifecycle contract, capability matrix. | Do not claim a final business result or enter live Do/Check. | Skill exists, all P0/P1 confirmations are resolved, and the user explicitly authorizes runtime. |
+| 2 | Run an existing skill's Do and Check stages in a dedicated run directory. | `run-manifest.json`, logs, structured result, Check result, evidence paths, exit code. | Do not modify skill source, rules, or baselines while running. | A complete run record is available for review. |
+| 3 | Review one identified run and form a change proposal. | Run evidence, diagnosis, proposal, impact analysis, and retest plan. | Do not silently implement or publish a proposed change. | The user approves a return to period 1, or the proposal is retained as feedback. |
+
+### Main Flow And Gate Sequence
+
+```mermaid
+flowchart TD
+    A["Business request"] --> B["Creator wrapper\nRewrite as a skill-creation goal"]
+    B --> C["Declare active_period and allowed outputs"]
+    C --> D["Complete requirements confirmation table"]
+    D --> E["Generate contracts, PDCA stages, scripts, and checks"]
+    E --> F{"Unknown page fields\nor external constraints?"}
+    F -- "No" --> G["Validate candidate skill and capability matrix"]
+    F -- "Yes" --> H["Bounded probe in isolated workspace"]
+    H --> I["Consume probe summary only\nUpdate selectors, mappings, and tests"]
+    I --> G
+    G --> J{"All period-1 gates pass\nand user explicitly authorizes runtime?"}
+    J -- "No" --> K["Stay in period 1\nContinue skill design or request confirmation"]
+    J -- "Yes" --> L["Enter period 2\nRun Do and Check"]
+    L --> M["Period 3 review and change proposal"]
+```
+
+The words “start,” “continue,” or “execute” are ambiguous while the active period is 1. They mean continue building the skill unless the user explicitly authorizes a real runtime action such as entering period 2, running Do/Check, or starting formal collection.
+
+### Control Checklist Crosswalk
+
+| Control point | Period | What must be checked | Evidence or artifact | Failure response |
+|---|---:|---|---|---|
+| Creator wrapper | 1 | Business request is expressed as a reusable skill capability, not an immediate business command. | Wrapper result with original goal, skill goal, prohibited direct actions, and allowed sample boundary. | Stop before search, collection, script execution, or final report generation. |
+| Requirements confirmation | 1 | Data source, output format, trigger, parameters, permissions, and delivery form are known or marked pending. | Complete confirmation table with status, risk, and handling action. | Keep the candidate in design mode; do not imply deployment readiness. |
+| Stage gate | 1 -> 2 | Skill source exists, no P0/P1 confirmation remains, and the user clearly authorizes live runtime. | Lifecycle contract and explicit user authorization. | Stay in period 1 even if a sample page was accessible. |
+| Do design | 1 | Business core has a real execution path before reports and process wrappers. | `do-run-plan.md`, `script-design.md`, AI decision checklist, script inventory. | Downgrade maturity or record the implementation gap. |
+| Runtime provenance | 2 | Each business result can be traced to source, script version, steps, record counts, evidence, and exit code. | `run-manifest.json` or equivalent. | Mark result unverified; block baseline updates, synchronization, and business conclusions. |
+| Check enforcement | 2 | Check scripts consume rules and schemas, verify required outputs, and classify failures. | Machine-readable Check result, rules, schema, exit code. | Produce P0/P1/P2 diagnosis and route to review. |
+| Review proposal | 3 | Proposed changes name the evidence, scope, risks, user decision, and retest path. | Change proposal and retest plan. | Do not modify source or publish until the proposal returns to period 1. |
+| Release synchronization | 0 | Released rules, templates, scripts, metadata, and human documentation remain aligned. | Regression output, version match, release commit. | Block release until the mismatch is corrected. |
+
+### Subagent Isolation
+
+Use an exploration subagent only to resolve a defined uncertainty such as page structure, field mapping, selector candidates, login constraints, or a small external protocol question. It is never an alternative path into real business execution.
+
+```mermaid
+flowchart LR
+    MAIN["Main agent\nPeriod-1 skill design"] -->|"business encapsulation contract"| CORE["Business encapsulation subagent\nperiod 1 only"]
+    MAIN -->|"bounded exploration contract"| SUB["Exploration subagent\nperiod 1 only"]
+    CORE --> CORE_SUMMARY["business-core-summary.json\nDo/Check contract only"]
+    CORE_SUMMARY --> MAIN
+    SUB --> RAW["Isolated evidence\nwork/probes/{probe_id}/"]
+    SUB --> SUMMARY["probe-summary.json\nfields, selectors, fingerprints, diagnostics"]
+    SUMMARY --> MAIN
+    MAIN --> DESIGN["Skill design artifacts\nselectors, mappings, tests, confirmations"]
+    CORE -. "forbidden" .-> OUT["outputs/ final reports\nbaseline and external sync"]
+    SUB -. "forbidden" .-> OUT
+    CORE -. "forbidden" .-> RUN["Period-2 Do and Check"]
+    SUB -. "forbidden" .-> RUN["Period-2 Do and Check"]
+```
+
+| Role | Can access or create | Must not do |
+|---|---|---|
+| Main agent | Period controls, confirmation table, skill source, contracts, selectors, tests, and structured probe summaries. | Treat raw probe data as a final business output or use probe success as runtime authorization. |
+| Business encapsulation subagent | A bounded business question and `business-core-summary.json` containing Do core actions, I/O, Check rules, exceptions, evidence, open decisions, and coverage gaps. | Access real full business data, run Do/Check, create final reports, update baselines, synchronize externally, publish, or authorize period 2. |
+| Exploration subagent | A named question, a bounded sample, `work/probes/{probe_id}/`, and `probe-summary.json`. | Batch collection, final tables, baselines, external synchronization, skill publishing, or period-2 Do/Check. |
+| Review subagent | Boundary contract, candidate skill artifacts, and summary-level evidence. | Read raw samples unless a narrowly scoped diagnosis requires it. |
+
+Every exploration contract records the question, permitted sources, sample limit, isolated directory, forbidden actions, summary schema, and stop condition. The default limit is three pages or ten page elements. The main agent consumes only the structured summary and evidence indexes, then translates them into selectors, field mappings, test fixtures, or open confirmation questions.
+
+Business encapsulation uses the same principle before page exploration: `references/business-core-boundary.md` limits the subagent to requirements and approved rules, while `business-core-summary.json` may contain only the proposed Do/Check business contract. The main agent must review it against the confirmation table and translate it into the business-core implementation plan, Do plan, script design, Check rules, output schema, and AI decision checklist. Neither summary can authorize period 2.
+
+### Delivery Checklists
+
+| Before a period-1 skill is handed off | Before a period-2 run is accepted | Before a creator release is published |
+|---|---|---|
+| Creator wrapper and active period are explicit. | Runtime parameters are confirmed and a unique `run_id` is assigned. | `SKILL.md`, templates, checks, metadata, and README version statements agree. |
+| Confirmation table identifies every unresolved P0/P1 item. | Do writes structured output, logs, evidence, and a provenance manifest. | Creator regression and isolation checks pass. |
+| PDCA stages name inputs, actions, outputs, exceptions, evidence, and user decisions. | Check reads its rules and schema, produces a machine-readable result, and records an exit code. | No generated caches, temporary logs, smoke directories, or test output are staged. |
+| L3/L4 candidates include Do plan, script design, AI decision checklist, rules, schema, and a smoke path. | Failures are diagnosed as environment, access, HTTP, login/captcha, selector, proxy, or unknown collection issues. | The release commit includes only intended files and a clean versioned package. |
+| Any probe uses `references/subagent-boundary.md` and keeps raw evidence outside final outputs. | A runtime failure becomes evidence for period 3, not a silent source-code edit. | Remote branch and release commit are verified after push. |
+
+### Priority Model
+
+| Priority | Meaning | Examples of control failures |
+|---|---|---|
+| P0 | Blocker: the result is unusable, unsafe, or has crossed a lifecycle boundary. | A period-1 task produces a final business report; a subagent writes final output; the business core is absent. |
+| P1 | Material correctness or stability risk. | Rules or selectors are not consumed, a probe has no boundary contract, or maturity is overstated. |
+| P2 | Low-risk improvement or documentation gap. | A clearer explanation, report layout improvement, or optional helper example. |
+
+For the complete machine-facing requirements, see [`SKILL.md`](plugins/pdca-skill-creator/skills/pdca-skill-creator/SKILL.md), the [lifecycle protocol](plugins/pdca-skill-creator/skills/pdca-skill-creator/references/lifecycle-protocol.md), and the [subagent isolation protocol](plugins/pdca-skill-creator/skills/pdca-skill-creator/references/subagent-isolation-protocol.md).
+
 ## Version Summary
 
 | Version | Main change |
 |---|---|
+| 0.2.24 | Adds a business-encapsulation subagent contract: Do/Check business design is isolated into a structured summary, then reviewed and converted into skill contracts by the main agent without touching real business execution. |
 | 0.2.23 | Adds a bounded subagent-isolation contract for period-1 business probes: raw samples stay in isolated evidence directories, the main flow consumes structured summaries only, and probe success cannot authorize runtime or final business output. |
 | 0.2.22 | Extends Playwright-first enforcement to period-1 site probing and field-mapping samples, and requires a Windows host PowerShell run path when Codex sandbox permissions block browser startup. |
 | 0.2.21 | Enforced Playwright-first crawler scaffolds, blocked pure HTTP clients from being treated as the main web collection path, added release-sync documentation, and required both outermost `README.md` and `README.zh-CN.md` to stay aligned during upgrades. |
@@ -171,7 +279,7 @@ The simplest way is to add this repository as a Codex plugin marketplace.
 - Marketplace: `ai-plan-go`
 - Published repository: <https://github.com/ai-plan-go/plugins>
 - Git URL: `https://github.com/ai-plan-go/plugins.git`
-- Current version: `0.2.23`
+- Current version: `0.2.24`
 
 ## Release Sync Guide
 
@@ -267,7 +375,6 @@ The goal is not to make AI think harder every time. The goal is to make repeatab
 
 ## Version
 
-Current creator version: `0.2.23`
+Current creator version: `0.2.24`
 
 Source repository: <https://github.com/ai-plan-go/plugins.git>
-

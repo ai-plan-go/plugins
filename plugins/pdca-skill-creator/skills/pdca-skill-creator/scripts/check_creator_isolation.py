@@ -10,11 +10,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 REQUIRED = {
-    "SKILL.md": ["Subagent 双上下文门禁", "probe-summary.json", "subagent-isolation-protocol.md", "subagent 隔离回归要求"],
-    "references/lifecycle-protocol.md": ["Subagent 双上下文合同", "references/subagent-boundary.md", "probe-summary.json"],
-    "references/pdca-stage-template.md": ["Subagent 探索边界", "probe-summary.json", "时期 2"],
-    "references/subagent-isolation-protocol.md": ["Role split", "Summary Schema", "Main-Agent Consumption Rule"],
+    "SKILL.md": ["Subagent 分层隔离门禁", "probe-summary.json", "business-core-summary.json", "subagent-isolation-protocol.md", "业务封装 subagent 回归要求"],
+    "references/lifecycle-protocol.md": ["Subagent 双上下文合同", "references/subagent-boundary.md", "references/business-core-boundary.md", "probe-summary.json", "business-core-summary.json"],
+    "references/pdca-stage-template.md": ["Subagent 探索边界", "业务封装 Subagent 边界", "probe-summary.json", "business-core-summary.json", "时期 2"],
+    "references/subagent-isolation-protocol.md": ["Role split", "Business Encapsulation Contract", "business-core-summary.json", "Main-Agent Consumption Rule"],
     "references/use-case-test-subagent-isolation.md": ["active_period=1", "references/subagent-boundary.md", "Failure Conditions"],
+    "references/use-case-test-business-encapsulation-isolation.md": ["active_period=1", "business-core-summary.json", "references/business-core-boundary.md", "Failure Conditions"],
 }
 
 

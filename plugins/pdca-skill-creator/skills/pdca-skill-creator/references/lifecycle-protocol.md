@@ -31,7 +31,24 @@
 
 ## Subagent 双上下文合同
 
-时期 1 可使用 subagent 做最小业务探索，但它是受限诊断角色，不是业务执行角色。主 agent 维护技能封装、用户确认与时期切换；探索 subagent 只确认未知字段、页面状态、选择器或外部限制。
+时期 1 可使用 subagent 做业务核心封装或最小业务探索，但它们都是受限设计/诊断角色，不是业务执行角色。主 agent 维护技能封装、用户确认与时期切换；业务封装 subagent 只定义 Do/Check 合同，探索 subagent 只确认未知字段、页面状态、选择器或外部限制。
+
+使用业务封装 subagent 时，业务技能必须创建 `references/business-core-boundary.md`，至少包含：
+
+```text
+主任务时期：1
+主任务目标：创建/升级业务 skill；不执行业务 Do
+业务封装问题：
+允许输入：用户需求、确认表、脱敏规则和最小必要历史片段
+禁止输入：真实全量业务数据、完整页面样本、时期 2 日志和最终报表
+禁止动作：真实 Do/Check、批量采集、最终报表、基线更新、外部同步、时期切换和发布
+返回文件：business-core-summary.json
+返回字段：do_core_actions、inputs、outputs、check_rules、exception_taxonomy、evidence_requirements、open_decisions、coverage_gaps、confidence
+主 agent 转写目标：业务核心实现计划、Do 计划、脚本设计、Check 规则、输出 schema、AI 决策检查单
+停止条件：合同完整、存在待确认业务决策或达到约定范围
+```
+
+`business-core-summary.json` 只是一份设计输入，不得包含真实业务结果、运行状态或最终报表行。主 agent 必须按确认表进行二次审查后才能把它写入技能契约。
 
 使用 subagent 时，业务技能必须创建 `references/subagent-boundary.md`，至少包含：
 
@@ -134,6 +151,7 @@ subagent 探索问题：
 
 - 时期 0 读取创建器自身的相关规则、模板、测试与发布状态，不加载业务全量历史或截图。
 - 时期 1 读取当前业务需求、确认表和相关 Plan 历史片段。
+- 时期 1 使用业务封装 subagent 时，主 agent 只读取 `business-core-summary.json` 与所列开放决策；不将完整业务数据、运行日志或最终报表作为封装上下文。
 - 时期 1 使用 subagent 时，主 agent 只读取 `probe-summary.json` 与最小必要证据索引；不加载完整页面文本、批量样本记录或截图，除非用户明确要求诊断且该内容与当前字段问题直接相关。
 - 时期 2 默认只读取当前配置、最新规则和最新必要日志索引；不默认读完整 Plan 历史。
 - 时期 3 读取指定运行的结构化结果、Check 结果和与提案有关的历史片段；不读取无关历史运行。

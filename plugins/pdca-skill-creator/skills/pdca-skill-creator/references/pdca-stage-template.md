@@ -375,6 +375,16 @@ P2 问题：
 - 主 agent 只把摘要转化为确认表、字段映射、选择器、脚本设计或测试基线。不得将试抓记录重命名为正式业务表、最终台账或运行结果。
 - subagent 探索完成不构成进入时期 2 的授权。进入时期 2 仍必须满足技能已生成、整体确认完成、用户明确授权三个条件。
 
+### 业务封装 Subagent 边界
+
+当业务核心动作、Do/Check 规则、异常分类或证据字段尚需从需求中抽象时，Plan 阶段可委派业务封装 subagent。它只设计业务合同，不运行任何真实业务。
+
+- 先创建 `references/business-core-boundary.md`，声明允许输入、禁止真实数据、返回 schema、禁止动作、主 agent 转写目标和停止条件。
+- 业务封装摘要仅写入 `{work_root}/work/business-core/{encapsulation_id}/business-core-summary.json`，不得写入 `outputs/`、基线、最终报表目录或技能发布目录。
+- `business-core-summary.json` 只能包含 Do 核心动作、输入输出、Check 规则、异常分类、证据要求、开放决策和覆盖缺口；不得包含运行记录、最终业务数据或进入运行期的结论。
+- 主 agent 必须以确认表为准二次审查摘要，再转写为业务核心实现计划、`do-run-plan.md`、`script-design.md`、`check-rules.yaml`、`output-schema.json` 和 `ai-decision-checklist.md`。
+- 业务封装 subagent 的结论不构成时期 2 授权。任何真实 Do/Check 仍需技能生成完成、整体确认完成和用户明确授权。
+
 ### 动作
 
 - 拆分业务需求、产品形态、技术偏好和固定约束。
@@ -419,6 +429,7 @@ P2 问题：
 - L3/L4 的 Do 脚本流程计划文档
 - L3/L4 的生成后自检方案或自检结果
 - 若使用 subagent：`references/subagent-boundary.md`、隔离 `probe-summary.json` 证据索引和摘要消费记录
+- 若使用业务封装 subagent：`references/business-core-boundary.md`、隔离 `business-core-summary.json` 和主 agent 的契约转写记录
 - 通用规范评分结果或无法运行原因
 - 业务用例评分结果或无法运行原因
 - 日志和证据要求
