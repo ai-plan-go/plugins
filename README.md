@@ -80,9 +80,24 @@ Generated skills use four maturity levels:
 - Excludes `__pycache__/`, `*.pyc`, `work_smoke/`, `tmp_smoke/`, business test reports, temporary logs, and local test outputs from final deliverables.
 - Supports testing either plain skill folders or installable plugin roots.
 
-## Operating Controls
+## Fixed Creator Flow
 
-This section is the human-facing map of the creator's runtime controls. `SKILL.md` and the referenced contracts remain authoritative; this guide makes their boundaries, evidence, and handoffs visible before a workflow is created or run.
+Every new or upgraded skill follows the same named sequence:
+
+1. **Step 1 - Requirements Check and Confirmation**: record the business goal, source, scope, fields, output, environment, quality rules, and delivery form.
+2. **Step 2 - Creator Wrapper**: turn the business request into a skill-creation goal; do not treat it as an instruction to run the business task.
+3. **Step 3 - Business-Core Convergence**: define the smallest real business action before adding reports, logs, PDCA structure, or plugin packaging.
+4. **Step 4 - Probe or Business Encapsulation**: use a bounded probe or subagent only for unresolved fields, page constraints, or business contracts.
+5. **Step 5 - Skill Structure Generation**: create the skill or installable plugin layout.
+6. **Step 6 - Contracts and Scripts**: add the execution plan, script design, AI decision checklist, rules, schemas, and runnable scaffold.
+7. **Step 7 - Quality Gates and Self-Check**: reject missing confirmation, a missing business core, leaked creator controls, or unverified runtime claims.
+8. **Step 8 - Release and Delivery**: validate metadata, package structure, and clean delivery contents.
+
+Two gates are deliberately strict: requirement confirmation happens before implementation or probing, and a confirmed design is not permission to perform a real Do/Check run. The creator's internal `active_period` state is never a field that users of a generated business skill need to understand.
+
+## Creator Internal Controls
+
+This section is a maintainer-facing map of the creator's internal controls. `SKILL.md` and the referenced contracts remain authoritative. Generated business skills use preparation, runtime, and review language instead of exposing `active_period` or period numbers.
 
 ### Four-Period Lifecycle
 
@@ -107,7 +122,7 @@ flowchart LR
 ```mermaid
 flowchart TD
     A["Business request"] --> B["Creator wrapper\nRewrite as a skill-creation goal"]
-    B --> C["Declare active_period and allowed outputs"]
+    B --> C["Apply internal creator controls"]
     C --> D["Complete requirements confirmation table"]
     D --> E["Generate contracts, PDCA stages, scripts, and checks"]
     E --> F{"Unknown page fields\nor external constraints?"}
@@ -121,7 +136,7 @@ flowchart TD
     L --> M["Period 3 review and change proposal"]
 ```
 
-The words “start,” “continue,” or “execute” are ambiguous while the active period is 1. They mean continue building the skill unless the user explicitly authorizes a real runtime action such as entering period 2, running Do/Check, or starting formal collection.
+During skill creation, the words “start,” “continue,” or “execute” mean continue building the skill unless the user explicitly authorizes a real runtime action such as running Do/Check or starting formal collection.
 
 ### Control Checklist Crosswalk
 
@@ -191,6 +206,9 @@ For the complete machine-facing requirements, see [`SKILL.md`](plugins/pdca-skil
 
 | Version | Main change |
 |---|---|
+| 0.2.28 | Documents the fixed eight-step creator flow, mandatory requirements confirmation, business-core-first generation, and creator-only `active_period` control. |
+| 0.2.27 | Replaces repeated narrative rules with named steps and hard triggers; removes release metadata from the machine-facing `SKILL.md`. |
+| 0.2.26 | Adds the named requirements-confirmation step and prevents `active_period` from leaking into generated business skills. |
 | 0.2.24 | Adds a business-encapsulation subagent contract: Do/Check business design is isolated into a structured summary, then reviewed and converted into skill contracts by the main agent without touching real business execution. |
 | 0.2.23 | Adds a bounded subagent-isolation contract for period-1 business probes: raw samples stay in isolated evidence directories, the main flow consumes structured summaries only, and probe success cannot authorize runtime or final business output. |
 | 0.2.22 | Extends Playwright-first enforcement to period-1 site probing and field-mapping samples, and requires a Windows host PowerShell run path when Codex sandbox permissions block browser startup. |
@@ -279,7 +297,7 @@ The simplest way is to add this repository as a Codex plugin marketplace.
 - Marketplace: `ai-plan-go`
 - Published repository: <https://github.com/ai-plan-go/plugins>
 - Git URL: `https://github.com/ai-plan-go/plugins.git`
-- Current version: `0.2.24`
+- Current version: `0.2.28`
 
 ## Release Sync Guide
 
@@ -361,7 +379,7 @@ Skills created with `pdca-skill-creator` are designed to include:
 - Health diagnosis with P0/P1/P2 priority levels.
 - Token-control rules for scripts, screenshots, and historical logs.
 - A `references/plan-history.md` file for preserving historical requirements and decisions.
-- Source metadata that records the creator name, repository, version, and generation date.
+- Source provenance when needed, without exposing creator-internal controls to business users.
 
 ## Design Philosophy
 
@@ -375,6 +393,6 @@ The goal is not to make AI think harder every time. The goal is to make repeatab
 
 ## Version
 
-Current creator version: `0.2.24`
+Current creator version: `0.2.28`
 
 Source repository: <https://github.com/ai-plan-go/plugins.git>
