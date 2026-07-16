@@ -8,11 +8,8 @@ Core rule: README files are human-facing promotion, usage, installation, package
 
 | File | Audience | Role | Version source |
 |---|---|---|---|
-| `README.md` | Humans maintaining or browsing the local workspace | Human-facing overview, usage, install/release pointers, and links to authoritative files | Reads from `SKILL.md` and `.codex-plugin/plugin.json`; do not use as the authority for skill behavior |
-| `README.zh-CN.md` | Chinese-speaking humans maintaining or browsing the local workspace | Chinese human-facing package overview, usage, install/release pointers, and links to authoritative files | Reads from `SKILL.md` and `.codex-plugin/plugin.json`; do not use as the authority for skill behavior |
-| `plugins-publish/README.md` | GitHub marketplace visitors | English promotional and usage landing page for the whole plugin marketplace repository | Must match `plugins/pdca-skill-creator/.codex-plugin/plugin.json` |
-| `plugins-publish/README.zh-CN.md` | GitHub marketplace visitors | Chinese promotional and usage landing page for the whole plugin marketplace repository | Must match `plugins/pdca-skill-creator/.codex-plugin/plugin.json` |
-| `plugins-publish/plugins/pdca-skill-creator/README.md` | Users browsing the plugin package directory | Human-facing single-plugin package guide: what this plugin is, where the executable skill lives, and how to verify the version | Must match `.codex-plugin/plugin.json` in the same directory |
+| repository-root `README.md` | Humans maintaining or browsing the repository | English repository landing page, release summary, installation guidance, and links to authoritative files | Reads from `plugins/pdca-skill-creator/skills/pdca-skill-creator/SKILL.md` and `plugins/pdca-skill-creator/.codex-plugin/plugin.json`; do not use as the authority for skill behavior |
+| repository-root `README.zh-CN.md` | Chinese-speaking humans maintaining or browsing the repository | Chinese repository landing page, release summary, installation guidance, and links to authoritative files | Reads from `plugins/pdca-skill-creator/skills/pdca-skill-creator/SKILL.md` and `plugins/pdca-skill-creator/.codex-plugin/plugin.json`; do not use as the authority for skill behavior |
 
 ## Authoritative Files
 
@@ -28,42 +25,35 @@ Do not add a new business control rule only to README. If a rule changes generat
 ## Source And Publish Layout
 
 ```text
-pdca-skill-creator/
+plugins-repo/
 ├── README.md
 ├── README.zh-CN.md
-├── SKILL.md
-├── agents/
-├── docs/
-│   └── repository-structure.md
-├── references/
-├── scripts/
-└── plugins-publish/
-    ├── README.md
-    ├── README.zh-CN.md
-    ├── marketplace.json
-    └── plugins/
-        └── pdca-skill-creator/
-            ├── README.md
-            ├── .codex-plugin/
-            │   └── plugin.json
-            └── skills/
-                └── pdca-skill-creator/
-                    ├── SKILL.md
-                    ├── agents/
-                    ├── references/
-                    └── scripts/
+├── marketplace.json
+├── assets/
+└── plugins/
+    └── pdca-skill-creator/
+        ├── .codex-plugin/
+        │   └── plugin.json
+        ├── assets/
+        ├── docs/
+        │   └── repository-structure.md
+        └── skills/
+            └── pdca-skill-creator/
+                ├── SKILL.md
+                ├── agents/
+                ├── references/
+                └── scripts/
 ```
 
 ## Synchronization Checklist
 
 Before publishing:
 
-- Root `SKILL.md` and `plugins-publish/plugins/pdca-skill-creator/skills/pdca-skill-creator/SKILL.md` must match.
-- Root `references/` and published skill `references/` must match for files that are part of the skill.
-- Root `scripts/` and published skill `scripts/` must match for files that are part of the skill.
-- `.codex-plugin/plugin.json` version must match the version stated in published `SKILL.md`.
-- Local package `README.md` and `README.zh-CN.md` must both reflect the new version and major release changes.
-- `plugins-publish/README.md`, `plugins-publish/README.zh-CN.md`, and `plugins-publish/plugins/pdca-skill-creator/README.md` must not contain stale version numbers.
+- `plugins/pdca-skill-creator/skills/pdca-skill-creator/SKILL.md` must match the intended released rules.
+- `plugins/pdca-skill-creator/skills/pdca-skill-creator/references/` must match the intended released templates and contracts.
+- `plugins/pdca-skill-creator/skills/pdca-skill-creator/scripts/` must match the intended released checkers and tooling.
+- `plugins/pdca-skill-creator/.codex-plugin/plugin.json` version must match the version stated in `SKILL.md`.
+- Repository-root `README.md` and `README.zh-CN.md` must both reflect the new version and major release changes.
 - Generated caches such as `__pycache__/`, `*.pyc`, `work_smoke/`, temporary logs, and local test outputs must not be staged.
 
 ## Upgrade Release Guide
@@ -88,11 +78,9 @@ Update files in this order:
 2. `skills/pdca-skill-creator/references/pdca-stage-template.md`
 3. `skills/pdca-skill-creator/scripts/run_creator_use_case_test.py` and related checkers
 4. `.codex-plugin/plugin.json`
-5. local package `README.md`
-6. local package `README.zh-CN.md`
-7. marketplace or publish-facing `README.md`
-8. marketplace or publish-facing `README.zh-CN.md`
-9. `docs/repository-structure.md` when the sync contract, file list, or release process changes
+5. repository-root `README.md`
+6. repository-root `README.zh-CN.md`
+7. `docs/repository-structure.md` when the sync contract, file list, or release process changes
 
 ### Minimum Upgrade Checks
 
@@ -100,7 +88,7 @@ Before commit:
 
 - Search for the old version string and confirm no stale version remains in released files.
 - Confirm `README.md` and `README.zh-CN.md` both mention the same current version.
-- Confirm the package structure examples list both README files if both are required.
+- Confirm the structure examples place `README.md` and `README.zh-CN.md` only at the repository outermost level.
 - Confirm any newly introduced hard rule in `SKILL.md` is summarized in the human-facing READMEs.
 - Confirm the release did not stage `__pycache__/`, `*.pyc`, temporary logs, `work_smoke/`, or local debug outputs.
 - Run at least syntax or smoke validation for changed checker scripts.
@@ -121,4 +109,5 @@ Human-facing READMEs do not need to restate full AI rules, but they must summari
 - Updating English README but not `README.zh-CN.md`
 - Updating `SKILL.md` without syncing `pdca-stage-template.md`
 - Tightening a checker script without documenting the resulting release expectation
+- Reintroducing duplicate README files under the plugin package and causing structure drift
 - Publishing with temporary cache or smoke outputs staged

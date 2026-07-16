@@ -84,6 +84,7 @@ Generated skills use four maturity levels:
 
 | Version | Main change |
 |---|---|
+| 0.2.21 | Enforced Playwright-first crawler scaffolds, blocked pure HTTP clients from being treated as the main web collection path, added release-sync documentation, and required both outermost `README.md` and `README.zh-CN.md` to stay aligned during upgrades. |
 | 0.2.20 | Made `script-design.md` and `ai-decision-checklist.md` mandatory L3/L4 artifacts, added creator quality-gate checks for both, and fixed version-sync drift in published docs. |
 | 0.2.19 | Added ambiguity gates so “start executing” style replies stay in period 1 by default after confirmation, unless the user explicitly authorizes runtime entry. |
 | 0.2.18 | Added creator-wrapper gating so business requests passed to the creator are first converted into skill-creation goals before any runtime execution. |
@@ -132,17 +133,31 @@ Use this skill when you want to create or upgrade a Codex skill for:
 ## Repository Structure
 
 ```text
-pdca-skill-creator/
-├── SKILL.md
-├── agents/
-│   └── openai.yaml
-└── references/
-    └── pdca-stage-template.md
+plugins-repo/
+├── README.md
+├── README.zh-CN.md
+├── marketplace.json
+├── assets/
+└── plugins/
+    └── pdca-skill-creator/
+        ├── .codex-plugin/
+        │   └── plugin.json
+        ├── assets/
+        ├── docs/
+        │   └── repository-structure.md
+        └── skills/
+            └── pdca-skill-creator/
+                ├── SKILL.md
+                ├── agents/
+                │   └── openai.yaml
+                ├── references/
+                └── scripts/
 ```
 
-- `SKILL.md`: Main skill entry point, trigger description, creation workflow, and mandatory rules.
-- `agents/openai.yaml`: Codex UI metadata, including display name, short description, and default prompt.
-- `references/pdca-stage-template.md`: Detailed PDCA stage template loaded when creating business skills.
+- outermost `README.md` / `README.zh-CN.md`: human-facing repository landing pages and release summaries.
+- `plugins/pdca-skill-creator/skills/pdca-skill-creator/SKILL.md`: AI-facing authoritative skill behavior and creation rules.
+- `plugins/pdca-skill-creator/skills/pdca-skill-creator/agents/openai.yaml`: Codex UI metadata.
+- `plugins/pdca-skill-creator/skills/pdca-skill-creator/references/pdca-stage-template.md`: detailed PDCA stage template loaded when creating business skills.
 
 ## Installation
 
@@ -154,7 +169,17 @@ The simplest way is to add this repository as a Codex plugin marketplace.
 - Marketplace: `ai-plan-go`
 - Published repository: <https://github.com/ai-plan-go/plugins>
 - Git URL: `https://github.com/ai-plan-go/plugins.git`
-- Current version: `0.2.20`
+- Current version: `0.2.21`
+
+## Release Sync Guide
+
+When upgrading `pdca-skill-creator`, keep the outermost `README.md` and `README.zh-CN.md` aligned with:
+
+- `plugins/pdca-skill-creator/skills/pdca-skill-creator/SKILL.md`
+- `plugins/pdca-skill-creator/.codex-plugin/plugin.json`
+- `plugins/pdca-skill-creator/docs/repository-structure.md`
+
+Do not create extra README copies under the plugin package unless the repository structure document is intentionally changed first.
 
 Future sessions should use this section, `marketplace.json`, and `plugins/pdca-skill-creator/.codex-plugin/plugin.json` to quickly identify the published plugin.
 
@@ -240,7 +265,7 @@ The goal is not to make AI think harder every time. The goal is to make repeatab
 
 ## Version
 
-Current creator version: `0.2.20`
+Current creator version: `0.2.21`
 
 Source repository: <https://github.com/ai-plan-go/plugins.git>
 

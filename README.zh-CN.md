@@ -84,6 +84,7 @@
 
 | 版本 | 主要变化 |
 |---|---|
+| 0.2.21 | 强化 Playwright-first 爬虫脚手架门禁，禁止把纯 HTTP 客户端当作网页主采集链路，补充升级发布同步说明，并明确最外层 `README.md` 与 `README.zh-CN.md` 必须随版本同步。 |
 | 0.2.20 | 将 `script-design.md` 和 `ai-decision-checklist.md` 升级为 L3/L4 技能强制产物，新增质量门禁校验，并修复发布文档版本不同步问题。 |
 | 0.2.19 | 新增执行术语消歧门禁，确认完成后像“开始执行”这类回复默认仍停留在时期 1，除非用户明确授权进入运行期。 |
 | 0.2.18 | 新增创建器包装层门禁，先把传入创建器的业务需求转换为技能创建目标，再允许进入后续生成流程。 |
@@ -131,17 +132,31 @@
 ## 仓库结构
 
 ```text
-pdca-skill-creator/
-├── SKILL.md
-├── agents/
-│   └── openai.yaml
-└── references/
-    └── pdca-stage-template.md
+plugins-repo/
+├── README.md
+├── README.zh-CN.md
+├── marketplace.json
+├── assets/
+└── plugins/
+    └── pdca-skill-creator/
+        ├── .codex-plugin/
+        │   └── plugin.json
+        ├── assets/
+        ├── docs/
+        │   └── repository-structure.md
+        └── skills/
+            └── pdca-skill-creator/
+                ├── SKILL.md
+                ├── agents/
+                │   └── openai.yaml
+                ├── references/
+                └── scripts/
 ```
 
-- `SKILL.md`：技能入口，描述何时触发、如何创建 PDCA 技能、有哪些强制规则。
-- `agents/openai.yaml`：Codex UI 中的显示名称、简短介绍和默认提示。
-- `references/pdca-stage-template.md`：详细 PDCA 阶段模板，生成业务技能时按需读取。
+- 最外层 `README.md` / `README.zh-CN.md`：面向人的仓库入口说明和版本摘要。
+- `plugins/pdca-skill-creator/skills/pdca-skill-creator/SKILL.md`：面向 AI 的权威技能规则与创建流程。
+- `plugins/pdca-skill-creator/skills/pdca-skill-creator/agents/openai.yaml`：Codex UI 元信息。
+- `plugins/pdca-skill-creator/skills/pdca-skill-creator/references/pdca-stage-template.md`：生成业务技能时读取的详细 PDCA 阶段模板。
 
 ## 安装教程
 
@@ -153,7 +168,17 @@ pdca-skill-creator/
 - 插件市场：`ai-plan-go`
 - 发布仓库：<https://github.com/ai-plan-go/plugins>
 - Git 地址：`https://github.com/ai-plan-go/plugins.git`
-- 当前版本：`0.2.20`
+- 当前版本：`0.2.21`
+
+## 升级发布同步说明
+
+升级 `pdca-skill-creator` 时，最外层 `README.md` 和 `README.zh-CN.md` 必须与以下文件同步：
+
+- `plugins/pdca-skill-creator/skills/pdca-skill-creator/SKILL.md`
+- `plugins/pdca-skill-creator/.codex-plugin/plugin.json`
+- `plugins/pdca-skill-creator/docs/repository-structure.md`
+
+除非先明确修改结构说明文件，否则不要再在插件目录下额外复制新的 README。
 
 后续其他会话需要识别本插件时，优先查看本节、`marketplace.json` 和 `plugins/pdca-skill-creator/.codex-plugin/plugin.json`。
 
@@ -239,7 +264,7 @@ cp -R plugins/pdca-skill-creator/skills/pdca-skill-creator ~/.codex/skills/
 
 ## 版本
 
-当前创建器版本：`0.2.20`
+当前创建器版本：`0.2.21`
 
 来源仓库：<https://github.com/ai-plan-go/plugins.git>
 
