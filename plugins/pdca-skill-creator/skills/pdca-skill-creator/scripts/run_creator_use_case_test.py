@@ -502,13 +502,32 @@ def run_use_case_test(skill_dir: Path) -> dict:
         issues.append({
             "priority": "P1",
             "type": "creator_internal_state_leaked",
-            "detail": "generated skill should not expose creator-only active_period or numbered creator periods to business users",
+            "detail": "business SKILL.md should not expose creator-only active_period or numbered creator periods",
         })
-    if not re.search(r"Step\s*1\s*-\s*需求检查确认|需求检查确认步骤", deployment_contract + "\n" + skill_md, re.I):
+    creator_process_terms = [
+        r"Step\s*1\s*-\s*需求检查确认",
+        r"Step\s*2\s*-\s*创建器包装",
+        r"Step\s*3\s*-\s*业务核心收敛",
+        r"创建器包装",
+        r"包装后的技能创建目标",
+        r"本轮禁止",
+        r"允许的试抓",
+        r"生成来源",
+        r"整体需求确认表",
+        r"自我优化能力分层",
+    ]
+    leaked_terms = [pattern for pattern in creator_process_terms if re.search(pattern, skill_md, re.I)]
+    if leaked_terms:
+        issues.append({
+            "priority": "P1",
+            "type": "creator_process_leaked_to_business_skill",
+            "detail": "business SKILL.md leaks creator process terms: " + ", ".join(leaked_terms),
+        })
+    if not re.search(r"Step\s*1\s*-\s*需求检查确认|需求检查确认步骤", deployment_contract + "\n" + plan_history, re.I):
         issues.append({
             "priority": "P1",
             "type": "missing_named_requirement_confirmation_step",
-            "detail": "generated skill should expose a named Step 1 requirement-confirmation step",
+            "detail": "references should record the named Step 1 requirement-confirmation step",
         })
     if run_task and re.search(r"(?:skill_dir|skill_root|__file__).{0,80}(?:write_text|open\s*\()", run_task, re.I | re.S):
         issues.append({

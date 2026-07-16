@@ -213,11 +213,6 @@ def run_quality_gate(candidate_dir: Path) -> dict:
     if forbidden:
         issues.append({"priority": "P1", "type": "unclean_deliverable", "detail": ", ".join(forbidden[:8])})
 
-    for name, points, keywords in RUBRIC:
-        score, missing = keyword_score(text, keywords, points)
-        dimensions[name] = {"score": score, "max": points, "missing_keywords": missing}
-        total += score
-
     run_task = read_text(skill_dir / "scripts" / "run_task.py")
     check_outputs = read_text(skill_dir / "scripts" / "check_outputs.py")
     smoke_test = read_text(skill_dir / "scripts" / "smoke_test.py")
@@ -230,6 +225,21 @@ def run_quality_gate(candidate_dir: Path) -> dict:
     business_profile = read_text(skill_dir / "references" / "business-use-case-profile.json")
     business_test = read_text(skill_dir / "scripts" / "run_business_use_case_test.py")
     lifecycle_contract = read_text(skill_dir / "references" / "lifecycle-contract.md")
+    scoring_text = "\n".join([
+        text,
+        do_run_plan,
+        script_design,
+        ai_decision_checklist,
+        deployment_contract,
+        data_provenance_contract,
+        lifecycle_contract,
+        plan_history,
+    ])
+
+    for name, points, keywords in RUBRIC:
+        score, missing = keyword_score(scoring_text, keywords, points)
+        dimensions[name] = {"score": score, "max": points, "missing_keywords": missing}
+        total += score
 
     if any((skill_dir / "references" / name).exists() for name in ["check-rules.yaml", "check-rules.yml", "check-rules.json"]) and not script_mentions(check_outputs, "check-rules"):
         issues.append({"priority": "P1", "type": "check_rules_not_consumed", "detail": "check_outputs.py should read references/check-rules.yaml"})
@@ -261,9 +271,24 @@ def run_quality_gate(candidate_dir: Path) -> dict:
     if lifecycle_missing:
         issues.append({"priority": "P1", "type": "incomplete_lifecycle_contract", "detail": "lifecycle-contract.md missing: " + ", ".join(lifecycle_missing)})
     if re.search(r"active_period|当前请求时期|时期\s*`?[0-3]`?", text, re.I):
-        issues.append({"priority": "P1", "type": "creator_internal_state_leaked", "detail": "generated skill should not expose creator-only active_period or numbered creator periods to business users"})
-    if not re.search(r"Step\s*1\s*-\s*需求检查确认|需求检查确认步骤", deployment_contract + "\n" + text, re.I):
-        issues.append({"priority": "P1", "type": "missing_named_requirement_confirmation_step", "detail": "generated skill should expose a named Step 1 requirement-confirmation step"})
+        issues.append({"priority": "P1", "type": "creator_internal_state_leaked", "detail": "business SKILL.md should not expose creator-only active_period or numbered creator periods"})
+    creator_process_terms = [
+        r"Step\s*1\s*-\s*需求检查确认",
+        r"Step\s*2\s*-\s*创建器包装",
+        r"Step\s*3\s*-\s*业务核心收敛",
+        r"创建器包装",
+        r"包装后的技能创建目标",
+        r"本轮禁止",
+        r"允许的试抓",
+        r"生成来源",
+        r"整体需求确认表",
+        r"自我优化能力分层",
+    ]
+    leaked_terms = [pattern for pattern in creator_process_terms if re.search(pattern, text, re.I)]
+    if leaked_terms:
+        issues.append({"priority": "P1", "type": "creator_process_leaked_to_business_skill", "detail": "business SKILL.md leaks creator process terms: " + ", ".join(leaked_terms)})
+    if not re.search(r"Step\s*1\s*-\s*需求检查确认|需求检查确认步骤", deployment_contract + "\n" + plan_history, re.I):
+        issues.append({"priority": "P1", "type": "missing_named_requirement_confirmation_step", "detail": "references should record the named Step 1 requirement-confirmation step"})
     missing_script_design = [keyword for keyword in SCRIPT_DESIGN_KEYWORDS if keyword.lower() not in script_design.lower()]
     if missing_script_design:
         issues.append({"priority": "P1", "type": "incomplete_script_design_doc", "detail": "script-design.md missing: " + ", ".join(missing_script_design)})
