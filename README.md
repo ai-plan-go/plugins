@@ -84,6 +84,7 @@ Generated skills use four maturity levels:
 
 | Version | Main change |
 |---|---|
+| 0.2.23 | Adds a bounded subagent-isolation contract for period-1 business probes: raw samples stay in isolated evidence directories, the main flow consumes structured summaries only, and probe success cannot authorize runtime or final business output. |
 | 0.2.22 | Extends Playwright-first enforcement to period-1 site probing and field-mapping samples, and requires a Windows host PowerShell run path when Codex sandbox permissions block browser startup. |
 | 0.2.21 | Enforced Playwright-first crawler scaffolds, blocked pure HTTP clients from being treated as the main web collection path, added release-sync documentation, and required both outermost `README.md` and `README.zh-CN.md` to stay aligned during upgrades. |
 | 0.2.20 | Made `script-design.md` and `ai-decision-checklist.md` mandatory L3/L4 artifacts, added creator quality-gate checks for both, and fixed version-sync drift in published docs. |
@@ -170,7 +171,7 @@ The simplest way is to add this repository as a Codex plugin marketplace.
 - Marketplace: `ai-plan-go`
 - Published repository: <https://github.com/ai-plan-go/plugins>
 - Git URL: `https://github.com/ai-plan-go/plugins.git`
-- Current version: `0.2.22`
+- Current version: `0.2.23`
 
 ## Release Sync Guide
 
@@ -266,7 +267,7 @@ The goal is not to make AI think harder every time. The goal is to make repeatab
 
 ## Version
 
-Current creator version: `0.2.22`
+Current creator version: `0.2.23`
 
 Source repository: <https://github.com/ai-plan-go/plugins.git>
 

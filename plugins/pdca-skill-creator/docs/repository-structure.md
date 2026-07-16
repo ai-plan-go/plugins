@@ -76,11 +76,12 @@ Update files in this order:
 
 1. `skills/pdca-skill-creator/SKILL.md`
 2. `skills/pdca-skill-creator/references/pdca-stage-template.md`
-3. `skills/pdca-skill-creator/scripts/run_creator_use_case_test.py` and related checkers
-4. `.codex-plugin/plugin.json`
-5. repository-root `README.md`
-6. repository-root `README.zh-CN.md`
-7. `docs/repository-structure.md` when the sync contract, file list, or release process changes
+3. `skills/pdca-skill-creator/references/subagent-isolation-protocol.md` and any required regression use cases
+4. `skills/pdca-skill-creator/scripts/run_creator_use_case_test.py`, `scripts/check_creator_isolation.py`, and related checkers
+5. `.codex-plugin/plugin.json`
+6. repository-root `README.md`
+7. repository-root `README.zh-CN.md`
+8. `docs/repository-structure.md` when the sync contract, file list, or release process changes
 
 ### Minimum Upgrade Checks
 

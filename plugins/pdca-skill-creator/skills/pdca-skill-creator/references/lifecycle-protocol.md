@@ -29,6 +29,28 @@
 | `exit_condition` | 进入下一时期前需要满足的条件 |
 | `next_period` | 计划进入的下一时期；没有则填 `none` |
 
+## Subagent 双上下文合同
+
+时期 1 可使用 subagent 做最小业务探索，但它是受限诊断角色，不是业务执行角色。主 agent 维护技能封装、用户确认与时期切换；探索 subagent 只确认未知字段、页面状态、选择器或外部限制。
+
+使用 subagent 时，业务技能必须创建 `references/subagent-boundary.md`，至少包含：
+
+```text
+主任务时期：1
+主任务目标：创建/升级业务 skill；不执行业务 Do
+subagent 探索问题：
+允许来源与样本上限：
+隔离证据目录：{work_root}/work/probes/{probe_id}/
+禁止写入：{work_root}/outputs/、baseline/、技能根目录、插件发布目录
+禁止动作：批量采集、最终报表、基线更新、外部同步、时期 2 Do/Check
+返回文件：probe-summary.json
+返回字段：field_candidates、selector_candidates、source_fingerprints、evidence_paths、diagnostics、confidence、open_questions
+停止条件：达到样本上限、出现登录/验证码/权限阻断、已覆盖字段映射问题
+主 agent 消费规则：仅将摘要转化为设计契约、选择器、测试基线或待确认项
+```
+
+`probe-summary.json` 不得包含完整批量业务数据、最终报表内容或可直接当作业务结论的记录集。若探索需要保留原始片段，只能放在隔离证据目录，并以 URL 指纹和路径形式在摘要中引用。
+
 ## 生成业务技能必须创建的契约
 
 在业务技能内创建 `references/lifecycle-contract.md`，至少包含下列内容：
@@ -112,5 +134,6 @@
 
 - 时期 0 读取创建器自身的相关规则、模板、测试与发布状态，不加载业务全量历史或截图。
 - 时期 1 读取当前业务需求、确认表和相关 Plan 历史片段。
+- 时期 1 使用 subagent 时，主 agent 只读取 `probe-summary.json` 与最小必要证据索引；不加载完整页面文本、批量样本记录或截图，除非用户明确要求诊断且该内容与当前字段问题直接相关。
 - 时期 2 默认只读取当前配置、最新规则和最新必要日志索引；不默认读完整 Plan 历史。
 - 时期 3 读取指定运行的结构化结果、Check 结果和与提案有关的历史片段；不读取无关历史运行。
