@@ -22,7 +22,7 @@ RUBRIC = [
     ("executable_scaffold", 12, ["init_project.py", "run_task.py", "check_outputs.py", "smoke_test.py", "退出码|exit code", "日志|log", "结构化|structured"]),
     ("contract_consistency", 12, ["check-rules", "output-schema", "required_outputs", "outputs", "deployment-contract", "schema", "规则|rule"]),
     ("evidence_and_logs", 10, ["证据|evidence", "日志|log", "diagnostic|诊断", "P0", "P1", "P2"]),
-    ("lifecycle_isolation", 8, ["生命周期|lifecycle", "时期 0|period 0", "时期 1|period 1", "时期 2|period 2", "时期 3|period 3", "lifecycle-contract", "run_id", "改动提案|change proposal"]),
+    ("lifecycle_isolation", 8, ["生命周期|lifecycle", "准备阶段|preparation phase", "运行阶段|runtime phase", "复盘阶段|review phase", "创建器反馈出口|creator feedback outlet", "lifecycle-contract", "run_id", "改动提案|change proposal"]),
     ("self_optimization", 8, ["自我优化|self-optimization", "自我进化|self-evolution", "复测|retest|re-test", "plan-history", "Act"]),
     ("clean_packaging", 6, ["__pycache__", "work_smoke", "临时|temporary", "打包|package"]),
 ]
@@ -72,7 +72,7 @@ AI_DECISION_KEYWORDS = [
     "脚本固化",
     "AI 决策点",
     "用户确认",
-    "进入时期",
+    "正式运行",
 ]
 
 
@@ -256,10 +256,14 @@ def run_quality_gate(candidate_dir: Path) -> dict:
     missing_confirmation = [keyword for keyword in CONFIRMATION_KEYWORDS if keyword.lower() not in confirmation_blob.lower()]
     if missing_confirmation:
         issues.append({"priority": "P1", "type": "incomplete_preflight_confirmation", "detail": "missing overall confirmation fields: " + ", ".join(missing_confirmation)})
-    lifecycle_required = ["时期 0|period 0", "时期 1|period 1", "时期 2|period 2", "时期 3|period 3", "run_id", "outputs", "改动提案|change proposal", "创建器反馈|creator feedback"]
+    lifecycle_required = ["准备阶段|preparation phase", "运行阶段|runtime phase", "复盘阶段|review phase", "创建器反馈出口|creator feedback outlet", "run_id", "outputs", "改动提案|change proposal", "创建器反馈|creator feedback"]
     lifecycle_missing = [item for item in lifecycle_required if not any(part.lower() in lifecycle_contract.lower() for part in item.split("|"))]
     if lifecycle_missing:
         issues.append({"priority": "P1", "type": "incomplete_lifecycle_contract", "detail": "lifecycle-contract.md missing: " + ", ".join(lifecycle_missing)})
+    if re.search(r"active_period|当前请求时期|时期\s*`?[0-3]`?", text, re.I):
+        issues.append({"priority": "P1", "type": "creator_internal_state_leaked", "detail": "generated skill should not expose creator-only active_period or numbered creator periods to business users"})
+    if not re.search(r"Step\s*1\s*-\s*需求检查确认|需求检查确认步骤", deployment_contract + "\n" + text, re.I):
+        issues.append({"priority": "P1", "type": "missing_named_requirement_confirmation_step", "detail": "generated skill should expose a named Step 1 requirement-confirmation step"})
     missing_script_design = [keyword for keyword in SCRIPT_DESIGN_KEYWORDS if keyword.lower() not in script_design.lower()]
     if missing_script_design:
         issues.append({"priority": "P1", "type": "incomplete_script_design_doc", "detail": "script-design.md missing: " + ", ".join(missing_script_design)})

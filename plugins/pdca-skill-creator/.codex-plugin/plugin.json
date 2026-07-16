@@ -1,7 +1,7 @@
 {
   "name": "pdca-skill-creator",
-  "version": "0.2.24",
-  "description": "Create PDCA-based Codex skills with creator-wrapper gating, subagent-isolated business encapsulation and probing, script-only business data generation, source-processing-result manifests, mandatory confirmation, quality gates, and clean packaging.",
+  "version": "0.2.27",
+  "description": "Create PDCA-based Codex skills with a shorter fixed process, mandatory named requirement-confirmation steps, creator-only active_period isolation, business-core-first generation, and stronger confirmation gates.",
   "author": {
     "name": "ai-plan-go",
     "url": "https://github.com/ai-plan-go"

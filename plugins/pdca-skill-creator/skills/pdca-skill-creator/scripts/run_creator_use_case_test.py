@@ -490,13 +490,25 @@ def run_use_case_test(skill_dir: Path) -> dict:
                     "detail": "missing do-run-plan sections: " + ", ".join(missing_do_plan),
                 })
 
-    lifecycle_required = ["时期 0|period 0", "时期 1|period 1", "时期 2|period 2", "时期 3|period 3", "run_id", "outputs", "改动提案|change proposal", "创建器反馈|creator feedback"]
+    lifecycle_required = ["准备阶段|preparation phase", "运行阶段|runtime phase", "复盘阶段|review phase", "创建器反馈出口|creator feedback outlet", "run_id", "outputs", "改动提案|change proposal", "创建器反馈|creator feedback"]
     lifecycle_missing = [item for item in lifecycle_required if not any(part.lower() in lifecycle_contract.lower() for part in item.split("|"))]
     if lifecycle_missing:
         issues.append({
             "priority": "P1",
             "type": "incomplete_lifecycle_contract",
             "detail": "lifecycle-contract.md missing: " + ", ".join(lifecycle_missing),
+        })
+    if re.search(r"active_period|当前请求时期|时期\s*`?[0-3]`?", text, re.I):
+        issues.append({
+            "priority": "P1",
+            "type": "creator_internal_state_leaked",
+            "detail": "generated skill should not expose creator-only active_period or numbered creator periods to business users",
+        })
+    if not re.search(r"Step\s*1\s*-\s*需求检查确认|需求检查确认步骤", deployment_contract + "\n" + skill_md, re.I):
+        issues.append({
+            "priority": "P1",
+            "type": "missing_named_requirement_confirmation_step",
+            "detail": "generated skill should expose a named Step 1 requirement-confirmation step",
         })
     if run_task and re.search(r"(?:skill_dir|skill_root|__file__).{0,80}(?:write_text|open\s*\()", run_task, re.I | re.S):
         issues.append({

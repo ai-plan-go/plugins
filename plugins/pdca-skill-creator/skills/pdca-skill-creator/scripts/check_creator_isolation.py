@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 REQUIRED = {
-    "SKILL.md": ["Subagent 分层隔离门禁", "probe-summary.json", "business-core-summary.json", "subagent-isolation-protocol.md", "业务封装 subagent 回归要求"],
+    "SKILL.md": ["探索 subagent", "业务封装 subagent", "probe-summary.json", "business-core-summary.json", "subagent 不是运行授权"],
     "references/lifecycle-protocol.md": ["Subagent 双上下文合同", "references/subagent-boundary.md", "references/business-core-boundary.md", "probe-summary.json", "business-core-summary.json"],
     "references/pdca-stage-template.md": ["Subagent 探索边界", "业务封装 Subagent 边界", "probe-summary.json", "business-core-summary.json", "时期 2"],
     "references/subagent-isolation-protocol.md": ["Role split", "Business Encapsulation Contract", "business-core-summary.json", "Main-Agent Consumption Rule"],
