@@ -7,6 +7,7 @@ This directory is the installable package for the `pdca-skill-creator` Codex plu
 This README is a human-facing package guide. It explains what this plugin package is, where the installable skill lives, and how to verify the version. It is different from:
 
 - `../../README.md`: marketplace repository landing page.
+- `README.zh-CN.md`: Chinese package guide for the same plugin package.
 - `../../../README.md` in the local development workspace: maintainer workflow and release notes.
 - `skills/pdca-skill-creator/SKILL.md`: AI-facing authoritative skill behavior, workflow controls, templates, and generation rules.
 
@@ -48,6 +49,7 @@ The current package requires generated executable skills to include:
 ```text
 pdca-skill-creator/
 ├── README.md
+├── README.zh-CN.md
 ├── .codex-plugin/
 │   └── plugin.json
 ├── assets/
@@ -65,6 +67,7 @@ Before publishing, keep these files aligned:
 
 - `.codex-plugin/plugin.json`
 - `skills/pdca-skill-creator/SKILL.md`
+- `README.zh-CN.md`
 - marketplace `README.md` and `README.zh-CN.md`
 - this package README
 
