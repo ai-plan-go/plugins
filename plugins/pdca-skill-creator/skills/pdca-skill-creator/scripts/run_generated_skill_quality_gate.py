@@ -162,6 +162,14 @@ def script_mentions(script_text: str, hint: str) -> bool:
     return hint.lower() in script_text.replace("\\", "/").lower()
 
 
+def script_uses_playwright(script_text: str) -> bool:
+    return bool(re.search(r"playwright|async_playwright|sync_playwright", script_text, re.I))
+
+
+def script_uses_http_client(script_text: str) -> bool:
+    return bool(re.search(r"urlopen|requests\.|httpx|aiohttp|invoke-webrequest|invoke-restmethod|\biwr\b|\birm\b|curl", script_text, re.I))
+
+
 def forbidden_files(skill_dir: Path) -> list[str]:
     found: list[str] = []
     for path in skill_dir.rglob("*"):
@@ -229,6 +237,12 @@ def run_quality_gate(candidate_dir: Path) -> dict:
         issues.append({"priority": "P1", "type": "schema_not_consumed", "detail": "check_outputs.py should read references/output-schema.json"})
     if any((skill_dir / "references" / name).exists() for name in ["selectors.yaml", "selectors.yml", "selectors.json"]) and not script_mentions(run_task, "selectors"):
         issues.append({"priority": "P1", "type": "selectors_not_consumed", "detail": "run_task.py should read references/selectors.yaml"})
+    if run_task and script_uses_http_client(run_task) and not script_uses_playwright(run_task):
+        issues.append({"priority": "P1", "type": "crawler_framework_http_only", "detail": "run_task.py appears to use an HTTP client without a Playwright page-access path"})
+    site_probe_text = run_task + "\n" + do_run_plan + "\n" + deployment_contract
+    if re.search(r"站点摸底|字段映射|试抓|site probe|field mapping|probe", site_probe_text, re.I):
+        if script_uses_http_client(site_probe_text) and not script_uses_playwright(site_probe_text):
+            issues.append({"priority": "P1", "type": "period1_probe_http_only", "detail": "period-1 site probing or field mapping must be Playwright-first; HTTP clients may only be auxiliary diagnostics"})
     if smoke_test and not re.search(r"init_project|run_task|check_outputs", smoke_test, re.I):
         issues.append({"priority": "P1", "type": "weak_smoke_test", "detail": "smoke_test.py should exercise init/run/check chain"})
     missing_provenance = [keyword for keyword in DATA_PROVENANCE_KEYWORDS if not any(part.lower() in data_provenance_contract.lower() for part in keyword.split("|"))]
@@ -266,6 +280,9 @@ def run_quality_gate(candidate_dir: Path) -> dict:
         missing_diag = [term for term in expected_terms if term.lower() not in (run_task + check_outputs + deployment_contract).lower()]
         if len(missing_diag) >= 3:
             issues.append({"priority": "P1", "type": "weak_network_diagnostics", "detail": "crawler diagnostics should distinguish common failure causes; missing: " + ", ".join(missing_diag)})
+        powershell_probe_text = run_daily + "\n" + do_run_plan + "\n" + deployment_contract
+        if not re.search(r"PowerShell|\.ps1|\$Python|-Python", powershell_probe_text, re.I):
+            issues.append({"priority": "P1", "type": "missing_windows_powershell_fallback", "detail": "crawler skills should document a Windows PowerShell host-run path for Playwright when Codex sandbox blocks browser startup"})
         if not re.search(r"sample|expected|样例|期望|candidate|候选", business_profile + business_test + smoke_test, re.I):
             issues.append({"priority": "P1", "type": "missing_business_sample_expectation", "detail": "crawler/classification tests should include sample expected key fields and classification outcome"})
         missing_crawler_confirmation = [keyword for keyword in CRAWLER_CONFIRMATION_KEYWORDS if keyword.lower() not in confirmation_blob.lower()]

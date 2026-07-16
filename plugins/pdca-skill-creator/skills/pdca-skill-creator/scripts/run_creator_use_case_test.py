@@ -255,7 +255,7 @@ def script_uses_playwright(script_text: str) -> bool:
 
 
 def script_uses_http_only(script_text: str) -> bool:
-    has_http_client = bool(re.search(r"urlopen|requests\.|httpx|aiohttp|invoke-webrequest|curl", script_text, re.I))
+    has_http_client = bool(re.search(r"urlopen|requests\.|httpx|aiohttp|invoke-webrequest|invoke-restmethod|\biwr\b|\birm\b|curl", script_text, re.I))
     return has_http_client and not script_uses_playwright(script_text)
 
 
@@ -374,6 +374,14 @@ def run_use_case_test(skill_dir: Path) -> dict:
         issues.append({"priority": "P1", "type": "crawler_framework_missing", "detail": "run_task.py should include a real Playwright page collection path with diagnostics"})
     if run_task and script_uses_http_only(run_task):
         issues.append({"priority": "P1", "type": "crawler_framework_http_only", "detail": "run_task.py falls back to a pure HTTP client without a Playwright page-access path"})
+    site_probe_text = run_task + "\n" + do_run_plan + "\n" + deployment_contract
+    if re.search(r"站点摸底|字段映射|试抓|site probe|field mapping|probe", site_probe_text, re.I):
+        if re.search(r"invoke-webrequest|invoke-restmethod|\biwr\b|\birm\b|requests\.|urlopen|httpx|aiohttp|curl", site_probe_text, re.I) and not re.search(r"playwright", site_probe_text, re.I):
+            issues.append({
+                "priority": "P1",
+                "type": "period1_probe_http_only",
+                "detail": "period-1 site probing or field mapping must be Playwright-first; HTTP clients may only be auxiliary diagnostics",
+            })
     if run_task and contains_any_file(skill_dir, ["references/selectors.yaml", "references/selectors.yml", "references/selectors.json"]):
         if not script_consumes_file(run_task, "selectors"):
             issues.append({"priority": "P1", "type": "selectors_not_consumed", "detail": "run_task.py does not read selectors config"})
@@ -448,6 +456,13 @@ def run_use_case_test(skill_dir: Path) -> dict:
                 "priority": "P1",
                 "type": "weak_network_diagnostics",
                 "detail": "crawler diagnostics should distinguish permission, timeout, http, captcha/login, and selector failures; missing: " + ", ".join(missing_diagnostics),
+            })
+        powershell_probe_text = run_daily + "\n" + do_run_plan + "\n" + deployment_contract
+        if not re.search(r"PowerShell|\.ps1|\$Python|-Python", powershell_probe_text, re.I):
+            issues.append({
+                "priority": "P1",
+                "type": "missing_windows_powershell_fallback",
+                "detail": "crawler skills should document a Windows PowerShell host-run path for Playwright when Codex sandbox blocks browser startup",
             })
     if re.search(r"showstart|秀动|post-rock|post rock|后摇", text, re.I):
         showstart_blob = "\n".join([run_task, business_profile, business_test, deployment_contract, do_run_plan, skill_md])
