@@ -38,6 +38,7 @@ REQUIRED_FILES = [
     "references/deployment-contract.md",
     "references/data-provenance-contract.md",
     "references/do-run-plan.md",
+    "references/implementation-confirmation.md",
     "references/lifecycle-contract.md",
     "references/plan-history.md",
 ]
@@ -111,6 +112,19 @@ DO_RUN_PLAN_KEYWORDS = [
     "异常诊断",
     "Check",
     "用户确认",
+]
+
+
+IMPLEMENTATION_CONFIRMATION_KEYWORDS = [
+    "业务目标|business goal",
+    "数据来源|data source",
+    "脚本流程设计|script flow|script design",
+    "AI 决策边界|AI decision",
+    "用户确认|user confirmation",
+    "继续条件|continue condition",
+    "输出契约|output contract",
+    "质量门禁|quality gate",
+    "未覆盖|not covered|coverage gap",
 ]
 
 
@@ -367,8 +381,10 @@ def run_use_case_test(skill_dir: Path) -> dict:
     deployment_contract = read_text(skill_dir / "references" / "deployment-contract.md")
     data_provenance_contract = read_text(skill_dir / "references" / "data-provenance-contract.md")
     do_run_plan = read_text(skill_dir / "references" / "do-run-plan.md")
+    implementation_confirmation = read_text(skill_dir / "references" / "implementation-confirmation.md")
     skill_md = read_text(skill_dir / "SKILL.md")
     lifecycle_contract = read_text(skill_dir / "references" / "lifecycle-contract.md")
+    plan_history = read_text(skill_dir / "references" / "plan-history.md")
 
     if run_task and not script_uses_playwright(run_task):
         issues.append({"priority": "P1", "type": "crawler_framework_missing", "detail": "run_task.py should include a real Playwright page collection path with diagnostics"})
@@ -528,6 +544,24 @@ def run_use_case_test(skill_dir: Path) -> dict:
             "priority": "P1",
             "type": "missing_named_requirement_confirmation_step",
             "detail": "references should record the named Step 1 requirement-confirmation step",
+        })
+    implementation_missing = [
+        keyword
+        for keyword in IMPLEMENTATION_CONFIRMATION_KEYWORDS
+        if not any(part.lower() in implementation_confirmation.lower() for part in keyword.split("|"))
+    ]
+    if implementation_missing:
+        issues.append({
+            "priority": "P1",
+            "type": "incomplete_implementation_confirmation",
+            "detail": "implementation-confirmation.md missing: " + ", ".join(implementation_missing),
+        })
+    implementation_gate_blob = implementation_confirmation + "\n" + plan_history
+    if not re.search(r"已确认|用户确认|confirmed|approved|先生成草案", implementation_gate_blob, re.I):
+        issues.append({
+            "priority": "P1",
+            "type": "implementation_confirmation_not_recorded",
+            "detail": "implementation-confirmation.md or plan-history.md should record user confirmation or explicit draft authorization before executable generation",
         })
     if run_task and re.search(r"(?:skill_dir|skill_root|__file__).{0,80}(?:write_text|open\s*\()", run_task, re.I | re.S):
         issues.append({

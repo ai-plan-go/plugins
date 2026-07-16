@@ -206,6 +206,7 @@ flowchart LR
 
 | 版本 | 主要变化 |
 |---|---|
+| 0.2.30 | 新增业务实现确认门禁：生成脚本、插件、定时入口或 smoke test 前，必须先向用户呈现并确认脚本流程设计和 AI 决策边界。 |
 | 0.2.29 | 隔离创建器流程记录和业务入口 `SKILL.md`：确认表、包装层、成熟度审计迁移到 `references/`，质量门禁会拦截业务入口泄漏创建器步骤。 |
 | 0.2.28 | 文档同步固定的八步创建流程、强制需求确认、业务核心优先和仅创建器内部使用的 `active_period`。 |
 | 0.2.27 | 用具名步骤和硬触发器替换重复说明，并从机器执行的 `SKILL.md` 移除发布元信息。 |
@@ -297,7 +298,7 @@ plugins-repo/
 - 插件市场：`ai-plan-go`
 - 发布仓库：<https://github.com/ai-plan-go/plugins>
 - Git 地址：`https://github.com/ai-plan-go/plugins.git`
-- 当前版本：`0.2.29`
+- 当前版本：`0.2.30`
 
 ## 升级发布同步说明
 
@@ -393,6 +394,6 @@ cp -R plugins/pdca-skill-creator/skills/pdca-skill-creator ~/.codex/skills/
 
 ## 版本
 
-当前创建器版本：`0.2.29`
+当前创建器版本：`0.2.30`
 
 来源仓库：<https://github.com/ai-plan-go/plugins.git>

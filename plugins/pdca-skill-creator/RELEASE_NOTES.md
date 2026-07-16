@@ -1,22 +1,23 @@
-# pdca-skill-creator 0.2.29
+# pdca-skill-creator 0.2.30
 
 发布日期：2026-07-16
 
 ## 本次优化
 
-1. 新增业务 `SKILL.md` 与创建器审计信息的隔离规则：业务入口只写触发场景、输入、运行、输出、检查、边界和复盘入口。
-2. 将创建器包装、完整需求确认表、生成来源、成熟度审计和自我优化分层默认迁移到 `references/plan-history.md` 或 `references/deployment-contract.md`。
-3. 更新生成质量门禁：业务 `SKILL.md` 泄漏 `Step 1 - 需求检查确认`、`Step 2 - 创建器包装`、包装层字段或生成审计信息时标记为 P1。
-4. 保留创建器对话中的确认门禁，但不再要求业务入口文档暴露创建器步骤。
+1. 新增 `Step 5 - 业务实现确认`，要求在脚本、插件、定时入口或 smoke test 生成前，先向用户呈现脚本流程设计和 AI 决策边界。
+2. 新增 `references/implementation-confirmation.md` 交付要求，并提供 `references/implementation-confirmation-template.md`。
+3. 更新质量门禁：缺少业务实现确认文档、未覆盖脚本流程/AI 决策/继续条件，或未记录用户确认时标记为 P1。
+4. 修复质量脚本引用 `plan-history.md` 但未读取的问题。
 
 ## 同步修改范围
 
 - `.codex-plugin/plugin.json`
 - `skills/pdca-skill-creator/SKILL.md`
 - `skills/pdca-skill-creator/references/pdca-stage-template.md`
+- `skills/pdca-skill-creator/references/implementation-confirmation-template.md`
 - `skills/pdca-skill-creator/scripts/run_generated_skill_quality_gate.py`
 - `skills/pdca-skill-creator/scripts/run_creator_use_case_test.py`
 
 ## 发布说明
 
-- 当前目录即为可发布插件目录，插件版本为 `0.2.29`。
+- 当前目录即为可发布插件目录，插件版本为 `0.2.30`。

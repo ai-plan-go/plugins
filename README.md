@@ -206,6 +206,7 @@ For the complete machine-facing requirements, see [`SKILL.md`](plugins/pdca-skil
 
 | Version | Main change |
 |---|---|
+| 0.2.30 | Adds the implementation-confirmation gate: script flow and AI decision boundaries must be presented and confirmed before executable scripts, plugin structure, scheduled entries, or smoke tests are generated. |
 | 0.2.29 | Isolates creator process records from business-facing `SKILL.md`: audit tables and maturity records move to `references/`, while quality gates block creator-step leakage in generated business entry docs. |
 | 0.2.28 | Documents the fixed eight-step creator flow, mandatory requirements confirmation, business-core-first generation, and creator-only `active_period` control. |
 | 0.2.27 | Replaces repeated narrative rules with named steps and hard triggers; removes release metadata from the machine-facing `SKILL.md`. |
@@ -298,7 +299,7 @@ The simplest way is to add this repository as a Codex plugin marketplace.
 - Marketplace: `ai-plan-go`
 - Published repository: <https://github.com/ai-plan-go/plugins>
 - Git URL: `https://github.com/ai-plan-go/plugins.git`
-- Current version: `0.2.29`
+- Current version: `0.2.30`
 
 ## Release Sync Guide
 
@@ -394,6 +395,6 @@ The goal is not to make AI think harder every time. The goal is to make repeatab
 
 ## Version
 
-Current creator version: `0.2.29`
+Current creator version: `0.2.30`
 
 Source repository: <https://github.com/ai-plan-go/plugins.git>

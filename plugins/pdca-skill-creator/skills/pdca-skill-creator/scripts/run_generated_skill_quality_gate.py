@@ -38,6 +38,7 @@ REQUIRED_FILES = [
     "references/do-run-plan.md",
     "references/script-design.md",
     "references/ai-decision-checklist.md",
+    "references/implementation-confirmation.md",
     "references/deployment-contract.md",
     "references/data-provenance-contract.md",
     "references/lifecycle-contract.md",
@@ -73,6 +74,19 @@ AI_DECISION_KEYWORDS = [
     "AI 决策点",
     "用户确认",
     "正式运行",
+]
+
+
+IMPLEMENTATION_CONFIRMATION_KEYWORDS = [
+    "业务目标|business goal",
+    "数据来源|data source",
+    "脚本流程设计|script flow|script design",
+    "AI 决策边界|AI decision",
+    "用户确认|user confirmation",
+    "继续条件|continue condition",
+    "输出契约|output contract",
+    "质量门禁|quality gate",
+    "未覆盖|not covered|coverage gap",
 ]
 
 
@@ -220,16 +234,19 @@ def run_quality_gate(candidate_dir: Path) -> dict:
     do_run_plan = read_text(skill_dir / "references" / "do-run-plan.md")
     script_design = read_text(skill_dir / "references" / "script-design.md")
     ai_decision_checklist = read_text(skill_dir / "references" / "ai-decision-checklist.md")
+    implementation_confirmation = read_text(skill_dir / "references" / "implementation-confirmation.md")
     deployment_contract = read_text(skill_dir / "references" / "deployment-contract.md")
     data_provenance_contract = read_text(skill_dir / "references" / "data-provenance-contract.md")
     business_profile = read_text(skill_dir / "references" / "business-use-case-profile.json")
     business_test = read_text(skill_dir / "scripts" / "run_business_use_case_test.py")
     lifecycle_contract = read_text(skill_dir / "references" / "lifecycle-contract.md")
+    plan_history = read_text(skill_dir / "references" / "plan-history.md")
     scoring_text = "\n".join([
         text,
         do_run_plan,
         script_design,
         ai_decision_checklist,
+        implementation_confirmation,
         deployment_contract,
         data_provenance_contract,
         lifecycle_contract,
@@ -295,6 +312,16 @@ def run_quality_gate(candidate_dir: Path) -> dict:
     missing_ai_decision = [keyword for keyword in AI_DECISION_KEYWORDS if keyword.lower() not in ai_decision_checklist.lower()]
     if missing_ai_decision:
         issues.append({"priority": "P1", "type": "incomplete_ai_decision_checklist", "detail": "ai-decision-checklist.md missing: " + ", ".join(missing_ai_decision)})
+    missing_implementation_confirmation = [
+        keyword
+        for keyword in IMPLEMENTATION_CONFIRMATION_KEYWORDS
+        if not any(part.lower() in implementation_confirmation.lower() for part in keyword.split("|"))
+    ]
+    if missing_implementation_confirmation:
+        issues.append({"priority": "P1", "type": "incomplete_implementation_confirmation", "detail": "implementation-confirmation.md missing: " + ", ".join(missing_implementation_confirmation)})
+    implementation_gate_blob = implementation_confirmation + "\n" + plan_history
+    if not re.search(r"已确认|用户确认|confirmed|approved|先生成草案", implementation_gate_blob, re.I):
+        issues.append({"priority": "P1", "type": "implementation_confirmation_not_recorded", "detail": "implementation-confirmation.md or plan-history.md should record user confirmation or explicit draft authorization before executable generation"})
     if run_task and re.search(r"(?:skill_dir|skill_root|__file__).{0,80}(?:write_text|open\s*\()", run_task, re.I | re.S):
         issues.append({"priority": "P1", "type": "runtime_writes_skill_source", "detail": "run_task.py appears to write runtime evidence under the skill source; use the configured work/output directory"})
     if run_daily and re.search(r"^\s*python\s+", run_daily, re.I | re.M) and not re.search(r"\$Python|param\s*\([^)]*Python", run_daily, re.I | re.S):
