@@ -250,6 +250,15 @@ def script_consumes_file(script_text: str, file_hint: str) -> bool:
     return file_hint.lower() in normalized
 
 
+def script_uses_playwright(script_text: str) -> bool:
+    return bool(re.search(r"playwright|async_playwright|sync_playwright", script_text, re.I))
+
+
+def script_uses_http_only(script_text: str) -> bool:
+    has_http_client = bool(re.search(r"urlopen|requests\.|httpx|aiohttp|invoke-webrequest|curl", script_text, re.I))
+    return has_http_client and not script_uses_playwright(script_text)
+
+
 def forbidden_deliverable_files(skill_dir: Path) -> list[str]:
     forbidden: list[str] = []
     for path in skill_dir.rglob("*"):
@@ -361,8 +370,10 @@ def run_use_case_test(skill_dir: Path) -> dict:
     skill_md = read_text(skill_dir / "SKILL.md")
     lifecycle_contract = read_text(skill_dir / "references" / "lifecycle-contract.md")
 
-    if run_task and not re.search(r"playwright|async_playwright|sync_playwright|urlopen|requests\.|httpx|aiohttp", run_task, re.I):
-        issues.append({"priority": "P1", "type": "crawler_framework_missing", "detail": "run_task.py should include a real page collection path such as Playwright or an HTTP client plus diagnostics"})
+    if run_task and not script_uses_playwright(run_task):
+        issues.append({"priority": "P1", "type": "crawler_framework_missing", "detail": "run_task.py should include a real Playwright page collection path with diagnostics"})
+    if run_task and script_uses_http_only(run_task):
+        issues.append({"priority": "P1", "type": "crawler_framework_http_only", "detail": "run_task.py falls back to a pure HTTP client without a Playwright page-access path"})
     if run_task and contains_any_file(skill_dir, ["references/selectors.yaml", "references/selectors.yml", "references/selectors.json"]):
         if not script_consumes_file(run_task, "selectors"):
             issues.append({"priority": "P1", "type": "selectors_not_consumed", "detail": "run_task.py does not read selectors config"})

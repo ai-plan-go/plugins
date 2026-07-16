@@ -14,7 +14,7 @@ If this README conflicts with `skills/pdca-skill-creator/SKILL.md`, the skill fi
 
 ## Version
 
-- Current version: `0.2.20`
+- Current version: `0.2.21`
 - Manifest: `.codex-plugin/plugin.json`
 - Skill entry: `skills/pdca-skill-creator/SKILL.md`
 
@@ -27,6 +27,7 @@ The current package requires generated executable skills to include:
 - Four isolated lifecycle periods for creator evolution, business-skill generation, runtime checking, and evidence-based review. Runtime output is separated from skill source; reviews produce scoped proposals before implementation.
 - List-page and batch crawler skills collect configurable multiple records, deduplicate them, preserve per-record evidence, and bound detail-page enrichment instead of relying on one fixed detail URL.
 - Business skills start only after the user confirms one complete requirements table. Crawler requests include collection scope and a probe-based field-mapping review; workflows distinguish script-fixed work, AI decisions, and user confirmations.
+- Web crawler and frontend-inspection skills now require a Playwright-first collection path as the default runtime implementation. Pure HTTP clients may be used only for auxiliary diagnostics or offline sample preparation, not as the main page-access path.
 - Business data, runtime logs, check results, and report values are written only by scripts or deterministic tools. L3/L4 runs retain a source-processing-result manifest with hashes, counts, evidence, and exit status.
 
 - A step-by-step confirmation table for automation-style tasks.
